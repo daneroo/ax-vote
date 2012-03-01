@@ -1,0 +1,11 @@
+
+body, button, input, select, textarea { font-family: sans-serif; color: #222; }
+body, div {
+  margin:0;
+}
+
+html, body {
+  min-height:480px; /* so we can hide the URL bar , without viewport height=device-height*/
+/*  height:100%;*/
+/*  width:100%;*/
+}
