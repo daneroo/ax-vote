@@ -60,7 +60,7 @@ $(function(){
   DNode.connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
     var param=43;
-    if (1) setInterval(function(){
+    if (0) setInterval(function(){
         app.svc.zing(param,function (err,result) {
             if (err){
                 console.log('remote.zing('+param+') Error: ',err);
