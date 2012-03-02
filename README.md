@@ -1,4 +1,11 @@
 # Ekomobi Live Voting Endpoint
+##
+Integration into ekomobi: use the ekowidget directive once, and the starvote/raing pair where needed.
+
+    <div class="ekowidget"  data-injectjs="http://dirac.imetrical.com:3000/js/integrate.js" />
+    <div class="ekowidget"  data-injectjs="http://ax-vote.cloudfoundry.com/js/integrate.js" />
+    <div class="starvote" />
+    <div class='rating'/>
 
 ## Initial deployment to cloudfoundry
 When it's up, you can find it [here](http://ax-vote.cloudfoundry.com)

@@ -19,7 +19,7 @@ var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     next();
 }
-// server.use(allowCrossDomain);
+server.use(allowCrossDomain);
 
 var tally={};
 var services = {
@@ -32,6 +32,24 @@ var services = {
     }
     cb(null,n * 100);
   },
+  /* this was the cookie seting loginc in php
+  $app->get('/vote', function() use($app) {
+      $ip=$_SERVER['REMOTE_ADDR']; 
+      error_log('voting from '.$ip);
+      $voteId = $app->getCookie('vote_id');
+      if ($voteId === NULL){
+          $voteId=time()+26315569;
+          $app->setCookie('vote_id', $voteId,'1 minutes');
+          error_log('first vote for '.$voteId);
+      } else {
+          // refresh timeout...
+          $app->setCookie('vote_id', $voteId,'1 minutes');
+          error_log('replace vote for '.$voteId);
+      }
+
+      $app->response()->write('1'); //DO NOT REMOVE, is called periodically to avoid session timeout
+  });
+  */
   vote: function(id,rating,cb){
     // console.log('voting for id:%s rating:%d',id,rating);
     tally[id] = tally[id]||{sum:0,count:0};
