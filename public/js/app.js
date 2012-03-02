@@ -28,7 +28,9 @@ $(function(){
     start: 3,
     click: function(score, evt) {
       console.log('score: ' + score);
-      $.getJSON("/vote/thang",{rating:score});
+      $.getJSON("/vote/thang",{rating:score},function(tally){
+        console.log('tally',tally);
+      });
     },
     cancel:    true,
     cancelOff: 'cancel-off-big.png',

@@ -12,6 +12,14 @@ var dnode = require('dnode');
 // if local ?
 //server.use(express.logger());
 server.use(express.static(__dirname+ '/public'));
+//CORS middleware
+var allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET'); // 'GET,PUT,POST,DELETE'
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    next();
+}
+// server.use(allowCrossDomain);
 
 var tally={};
 var services = {
@@ -50,6 +58,9 @@ server.get('/vote/:id', function(req, res){
   services.vote(id,rating,function(err,tally){
     res.json(tally);
   });
+});
+server.get('/integrate.js', function(req, res){
+  res.send('setInterval(function(){console.log("integrated",$)},1000);',{'Content-Type': 'text/javascript'}, 200);
 });
 
 var ioOpts= (process.env.VMC_APP_PORT)?{
