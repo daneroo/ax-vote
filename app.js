@@ -59,9 +59,6 @@ server.get('/vote/:id', function(req, res){
     res.json(tally);
   });
 });
-server.get('/integrate.js', function(req, res){
-  res.send('setInterval(function(){console.log("integrated",$)},1000);',{'Content-Type': 'text/javascript'}, 200);
-});
 
 var ioOpts= (process.env.VMC_APP_PORT)?{
   'transports': [
