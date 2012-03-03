@@ -57,7 +57,12 @@ $(function(){
     });
   });
   
-  DNode.connect({reconnect:5000},function (remote) {
+  DNode({
+    log:function(msg){
+      console.log('msg from server',msg);
+      $('#log').text(msg);
+    }
+  }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
     var param=43;
     if (0) setInterval(function(){

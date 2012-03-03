@@ -24,9 +24,9 @@ server.use(allowCrossDomain);
 var tally={};
 var services = {
   zing : function (n, cb) { // cb(err,result)
-    console.log('called server zing',n);
+    // console.log('called server zing',n);
     if (n>100){
-      console.log('n is too large');
+      // console.log('n is too large');
       cb({code:-1,message:"n is too large"},null);
       return;
     }
@@ -58,7 +58,8 @@ var services = {
       tally[id].count++;
       tally[id].sum+=rating;
     }
-    console.log('voted for id:%s rating:%d',id,rating,tally[id]);
+    // console.log('voted for id:%s rating:%d',id,rating,tally[id]);
+    broadcast('somone rated: '+id+' with a rating of: '+rating);
     cb(null,tally[id]);
   }
 };
@@ -87,11 +88,37 @@ var ioOpts= (process.env.VMC_APP_PORT)?{
   'jsonp-polling'
   ]   
 }:{};
-dnode(services).listen(server,{ io : ioOpts});
+
+// var dns = dnode(services);
+var clients=[];
+var dns = dnode(function(client,con){
+  this.zing=services.zing;
+  this.vote=services.vote;
+  con.on('ready', function () {
+    clients.push(client);
+    broadcast('added a client: '+clients.length);
+  });
+  con.on('end', function () {
+    var idx = clients.indexOf(client);
+    if (idx!=-1) clients.splice(idx, 1);
+    // else: should never happen
+    broadcast('removed client: '+clients.length);
+  });
+});
+
+function broadcast(msg){
+  clients.forEach(function(client){
+    client.log(msg);
+  });
+}
+
+setInterval(function(){broadcast('server says:'+new Date())},10000);
+
+dns.listen(server,{ io : ioOpts});
 
 if (!process.env.VMC_APP_PORT) {
   // also listen to 7070 directly (locally)
-  dnode(services).listen(7070);
+  dns.listen(7070);
 }
 
 
