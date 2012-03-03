@@ -62,10 +62,23 @@
     </div><!-- /header -->
 
     <div data-role="content" data-theme="a">
-      <div class="starvote"></div>
-      <h4>Total votes:<span id="totalvotes"></span></h4>
-      <h4>Avg Rating:<span id="avgrating"></span></h4>
-      <button id="vote">Vote</button>
+      <h4>Test</h4>
+      <div class="starblock">
+        <label>Thing:</label>
+        <div class="starvote" data-vote-id="thing"></div>
+      </div>
+      <div class="starblock">
+        <label>Thang:</label>
+        <div class="starvote" data-vote-id="thang"></div>
+      </div>
+      <div class="testlog">
+      <b>Latest Vote:</b><span id="latestvoteid">--</span>&nbsp;&nbsp;&nbsp;
+      <b>Total votes:</b><span id="totalvotes">--</span>&nbsp;&nbsp;&nbsp;
+      <b>Avg Rating:</b><span id="avgrating">--</span>
+      </div>
+
+      <hr>
+      <h4>Results</h4>
     </div><!-- /content -->
 
     <div data-role="footer">

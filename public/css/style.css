@@ -9,3 +9,17 @@ html, body {
 /*  height:100%;*/
 /*  width:100%;*/
 }
+
+
+div.starblock {
+  margin-left:20px;
+  display:inline-block;
+}
+div.starvote {
+  display:inline-block;
+}
+
+.testlog {
+  margin-top:15px;
+  margin-left:20px;
+}

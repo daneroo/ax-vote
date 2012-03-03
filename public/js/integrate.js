@@ -50,18 +50,19 @@
   
   function vote(rating,cb){
     // json - this method requires CORS headers
-    $.getJSON(selfUrl+'/vote/mobi',{rating:rating},cb); 
+    var id = site.name+'-'+$.mobile.activePage.prop('id');
+    $.getJSON(selfUrl+'/vote',{id:id,rating:rating},cb); 
     return;
     
     // These are two other methods: using jsonp, does not require CORS
     //  jsonp
-    $.getJSON(selfUrl+'/vote/mobi?callback=?',{rating:rating},cb);
+    $.getJSON(selfUrl+'/vote?callback=?',{id:id,rating:rating},cb);
     
     // json-p
     $.ajax({
-      url: selfUrl+'/vote/mobi',
+      url: selfUrl+'/vote',
       dataType: 'jsonp',
-      data: {rating:rating},
+      data: {id:id,rating:rating},
       success: cb
     });
   }
@@ -72,7 +73,7 @@
     var foundUrl;
     $('script').each(function(){
       var re = /(.*)\/js\/integrate.js/i; // (.*) //new RegExp(file + '$');
-      var src = $(this).attr('src');
+      var src = $(this).prop('src');
       if (src){
         var m = src.match(re);
         console.log(m);

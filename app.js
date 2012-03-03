@@ -71,7 +71,7 @@ server.post('/jsonrpc', function(req, res, next){
 });
 
 server.enable("jsonp callback");
-server.get('/vote/:id', function(req, res){
+server.get('/vote', function(req, res){
   var id = req.param('id');
   var rating = req.param('rating');
   services.vote(id,rating,function(err,tally){
@@ -112,7 +112,7 @@ function broadcast(msg){
   });
 }
 
-setInterval(function(){broadcast('server says:'+new Date())},10000);
+setInterval(function(){broadcast('server heart beat: '+new Date())},30000);
 
 dns.listen(server,{ io : ioOpts});
 
