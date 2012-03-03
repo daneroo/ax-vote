@@ -18,6 +18,9 @@ div.starblock {
 div.starvote {
   display:inline-block;
 }
+div.resultvote {
+  display:inline-block;
+}
 
 .testlog {
   margin-top:15px;
