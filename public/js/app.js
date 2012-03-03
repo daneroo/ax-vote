@@ -25,7 +25,7 @@ $(function(){
   console.log('starvote len',$('.starvote').length);
   $('.starvote').raty({
     path:'/img/raty/',
-    start: 3,
+    start: 0,
     click: function(rating, evt) {
       var id=$(this).data('vote-id')||'TheVoid'
       function displayLatest(tally){
@@ -43,7 +43,7 @@ $(function(){
         });
       } else {
         // by dnode
-        app.svc.vote(id,(new Date().getTime()/1000)%5,function(err,tally){
+        app.svc.vote(id,rating,function(err,tally){
           console.log('dnode-tally',tally);
           displayLatest(tally);
         });      
@@ -58,12 +58,32 @@ $(function(){
     starHalf:  'star-half-big.png',
     starOff:   'star-off-big.png',
     starOn:    'star-on-big.png'
-  });      
-      
+  });
+  var resultOpts={
+    path:'/img/raty/',
+    start: 0,
+    readOnly: true,
+    half:  true,
+    NOTiconRange: [
+       { range: 2, on: 'face-a.png', off: 'face-a-off.png' },
+       { range: 3, on: 'face-b.png', off: 'face-b-off.png' },
+       { range: 4, on: 'face-c.png', off: 'face-c-off.png' },
+       { range: 5, on: 'face-d.png', off: 'face-d-off.png' }
+     ]
+   }
+  $('.voteresult').raty(resultOpts);      
   DNode({
     log:function(msg){
       console.log('msg from server',msg);
       $('#log').text(msg);
+    },
+    update:function(id,tally){
+      console.log('new tally for',id,tally);
+      var avg = tally.sum/tally.count;
+      var avg = Math.round(avg*10)/10;
+      $r=$('#result-'+id+' .voteresult');
+      $r.html('');
+      $r.raty($.extend({},resultOpts,{start:avg}));
     }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!

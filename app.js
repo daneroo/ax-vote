@@ -59,7 +59,7 @@ var services = {
       tally[id].sum+=rating;
     }
     // console.log('voted for id:%s rating:%d',id,rating,tally[id]);
-    broadcast('somone rated: '+id+' with a rating of: '+rating);
+    broadcast('somone rated: '+id+' with a rating of: '+rating,id,tally[id]);
     cb(null,tally[id]);
   }
 };
@@ -106,9 +106,12 @@ var dns = dnode(function(client,con){
   });
 });
 
-function broadcast(msg){
+function broadcast(msg,id,tally){
   clients.forEach(function(client){
     client.log(msg);
+    if (id && tally){
+      client.update(id,tally);
+    }
   });
 }
 
