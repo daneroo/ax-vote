@@ -35,7 +35,7 @@ $(function(){
         var avg = Math.round(avg*10)/10;
         $('#avgrating').text(avg);
       }
-      if (Math.random()<.5){
+      if (1) { //if (Math.random()<.5){
         // by json
         $.getJSON("/vote",{id:id,rating:rating},function(tally){
           console.log('json-tally',tally);
@@ -43,7 +43,7 @@ $(function(){
         });
       } else {
         // by dnode
-        app.svc.vote(id,rating,function(err,tally){
+        app.svc.vote(id,rating,null,function(err,tally){
           console.log('dnode-tally',tally);
           displayLatest(tally);
         });      

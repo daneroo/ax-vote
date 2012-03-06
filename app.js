@@ -12,17 +12,29 @@ var dnode = require('dnode');
 // if local ?
 //server.use(express.logger());
 server.use(express.cookieParser());
-server.use(express.session({ secret: "ekosekret" }));
 
-server.use(express.static(__dirname+ '/public'));
-//CORS middleware
-var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET'); // 'GET,PUT,POST,DELETE'
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    next();
+var sessionCookieMaxAge=365*24*60*60*1000; // 1 year
+server.use(express.session({ 
+  secret: "ekosekret",
+  cookie: { 
+    path:'/',
+    // domain:'.dev.axialdev.net',
+    httpOnly:false,
+    maxAge: sessionCookieMaxAge
+  }
+}));
+
+//CORS middleware - not using
+if (0){
+  var allowCrossDomain = function(req, res, next) {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET'); // 'GET,PUT,POST,DELETE'
+      res.header('Access-Control-Allow-Headers', 'Content-Type');
+      next();
+  }
+  server.use(allowCrossDomain);
 }
-server.use(allowCrossDomain);
+server.use(express.static(__dirname+ '/public'));
 
 var tally={};
 var services = {
@@ -35,40 +47,47 @@ var services = {
     }
     cb(null,n * 100);
   },
-  /* this was the cookie seting loginc in php
-  $app->get('/vote', function() use($app) {
-      $ip=$_SERVER['REMOTE_ADDR']; 
-      error_log('voting from '.$ip);
-      $voteId = $app->getCookie('vote_id');
-      if ($voteId === NULL){
-          $voteId=time()+26315569;
-          $app->setCookie('vote_id', $voteId,'1 minutes');
-          error_log('first vote for '.$voteId);
-      } else {
-          // refresh timeout...
-          $app->setCookie('vote_id', $voteId,'1 minutes');
-          error_log('replace vote for '.$voteId);
-      }
-
-      $app->response()->write('1'); //DO NOT REMOVE, is called periodically to avoid session timeout
-  });
-  */
-  vote: function(id,rating,cb){
-    // console.log('voting for id:%s rating:%d',id,rating);
+  vote: function(id,rating,req,cb){
     tally[id] = tally[id]||{sum:0,count:0};
-    rating = new Number(rating);
-    if (rating && !isNaN(rating)){
+    rating = +rating;
+    // validate rating: must be 1,..5: else null
+    if (rating===null || isNaN(rating) || rating<1 || rating>5){
+      rating=null;
+    }
+
+    var previousRating=0;
+    if (req && req.session){ // bypass for dnode invocation
+      req.session.votes = req.session.votes || {};
+      previousRating=req.session.votes[id] || 0
+      if (!rating){
+        delete req.session.votes[id];
+      } else {
+        req.session.votes[id]=rating;
+      }
+    }
+
+    if (previousRating){
+      tally[id].count--;
+      tally[id].sum-=previousRating;
+    }
+    if (rating){
       tally[id].count++;
       tally[id].sum+=rating;
     }
-    console.log('voted for id:%s rating:%d',id,rating,tally[id]);
-    broadcast('somone rated: '+id+' with a rating of: '+rating,id,tally[id]);
+    var message='nothing happened'
+    if (previousRating && rating){
+      message='somone replaced their rating for: '+id+' rating: '+rating+' previous rating:'+previousRating;
+    } else if (rating){
+      message='somone rated: '+id+' with a rating of: '+rating;
+    } else if (previousRating){
+      message='somone removed their rating for: '+id+' previous rating:'+previousRating;
+    }
+    broadcast(message,id,tally[id]);
     cb(null,tally[id]);
   }
 };
 
 jsonrpc_services = require('connect-jsonrpc')(services);
-
 server.post('/jsonrpc', function(req, res, next){
   jsonrpc_services(req,res,next);    
 });
@@ -76,18 +95,9 @@ server.post('/jsonrpc', function(req, res, next){
 server.enable("jsonp callback");
 server.get('/vote', function(req, res){
   var id = req.param('id');
-  var rating = req.param('rating');
-  if (req.session.votes){
-    console.log('-req.session.votes',req.session.votes);
-  }
-  if (req.session.votes && req.session.votes[id]!==null){
-    console.log('replacing vote:',req.session.votes[id],'with:',rating);
-  }
-  req.session.votes = req.session.votes || {};
-  req.session.votes[id]=rating;
-  console.log('+req.session.votes',req.session.votes);
+  var rating = req.param('rating');  
   // console.log(req.sessionStore);
-  services.vote(id,rating,function(err,tally){
+  services.vote(id,rating,req,function(err,tally){
     res.json(tally);
   });
 });

@@ -51,14 +51,17 @@
   function vote(rating,cb){
     // json - this method requires CORS headers
     var id = site.name+'-'+$.mobile.activePage.prop('id');
-    $.getJSON(selfUrl+'/vote',{id:id,rating:rating},cb); 
-    return;
+    
+    // CORS xhr - not using becaus won't send cookies
+    // $.getJSON(selfUrl+'/vote',{id:id,rating:rating},cb); 
+    // return;
     
     // These are two other methods: using jsonp, does not require CORS
     //  jsonp
     $.getJSON(selfUrl+'/vote?callback=?',{id:id,rating:rating},cb);
+    return;
     
-    // json-p
+    // jsonp explicit call
     $.ajax({
       url: selfUrl+'/vote',
       dataType: 'jsonp',
