@@ -11,6 +11,9 @@ var dnode = require('dnode');
 
 // if local ?
 //server.use(express.logger());
+server.use(express.cookieParser());
+server.use(express.session({ secret: "ekosekret" }));
+
 server.use(express.static(__dirname+ '/public'));
 //CORS middleware
 var allowCrossDomain = function(req, res, next) {
@@ -58,7 +61,7 @@ var services = {
       tally[id].count++;
       tally[id].sum+=rating;
     }
-    // console.log('voted for id:%s rating:%d',id,rating,tally[id]);
+    console.log('voted for id:%s rating:%d',id,rating,tally[id]);
     broadcast('somone rated: '+id+' with a rating of: '+rating,id,tally[id]);
     cb(null,tally[id]);
   }
@@ -74,6 +77,16 @@ server.enable("jsonp callback");
 server.get('/vote', function(req, res){
   var id = req.param('id');
   var rating = req.param('rating');
+  if (req.session.votes){
+    console.log('-req.session.votes',req.session.votes);
+  }
+  if (req.session.votes && req.session.votes[id]!==null){
+    console.log('replacing vote:',req.session.votes[id],'with:',rating);
+  }
+  req.session.votes = req.session.votes || {};
+  req.session.votes[id]=rating;
+  console.log('+req.session.votes',req.session.votes);
+  // console.log(req.sessionStore);
   services.vote(id,rating,function(err,tally){
     res.json(tally);
   });
