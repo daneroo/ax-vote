@@ -47,6 +47,9 @@ var services = {
     }
     cb(null,n * 100);
   },
+  getTally: function(cb){
+    cb(null,tally);
+  },
   vote: function(id,rating,req,cb){
     tally[id] = tally[id]||{sum:0,count:0};
     rating = +rating;
@@ -116,6 +119,7 @@ var ioOpts= (process.env.VMC_APP_PORT)?{
 var clients=[];
 var dns = dnode(function(client,con){
   this.zing=services.zing;
+  this.getTally=services.getTally;
   this.vote=services.vote;
   con.on('ready', function () {
     clients.push(client);

@@ -63,30 +63,52 @@ $(function(){
     path:'/img/raty/',
     start: 0,
     readOnly: true,
-    half:  true,
-    NOTiconRange: [
-       { range: 2, on: 'face-a.png', off: 'face-a-off.png' },
-       { range: 3, on: 'face-b.png', off: 'face-b-off.png' },
-       { range: 4, on: 'face-c.png', off: 'face-c-off.png' },
-       { range: 5, on: 'face-d.png', off: 'face-d-off.png' }
-     ]
+    half:  true
    }
-  $('.voteresult').raty(resultOpts);      
+  $('.voteresult').raty(resultOpts);
+  
+  // just sort the divs...
+  function reorderResults(){
+    ids=[];
+    $('.resultholder .starblock').each(function(){
+      ids.push($(this).prop('id'));
+    });
+    ids.sort();
+    $rh = $('.resultholder');
+    ids.forEach(function(id){
+      $('#'+id).appendTo($rh);
+    });
+  }  
+  function updateOneTally(id,tally){
+    console.log('new tally for',id,tally);
+    var avg = tally.sum/tally.count;
+    var avg = Math.round(avg*10)/10;
+    $resblock=$('#result-'+id);
+    if ($resblock.length===0){
+      $resblock = $('<div id="result-'+id+'" class="starblock" />');
+      $resblock.append($('<label />').text(id));
+      $resblock.append($('<div class="voteresult" />'));
+      $('.resultholder').append($resblock);
+    }
+    $r=$('#result-'+id+' .voteresult');
+    $r.html('');
+    $r.raty($.extend({},resultOpts,{start:avg}));
+    reorderResults();
+  };
   DNode({
     log:function(msg){
       console.log('msg from server',msg);
       $('#log').text(msg);
     },
-    update:function(id,tally){
-      console.log('new tally for',id,tally);
-      var avg = tally.sum/tally.count;
-      var avg = Math.round(avg*10)/10;
-      $r=$('#result-'+id+' .voteresult');
-      $r.html('');
-      $r.raty($.extend({},resultOpts,{start:avg}));
-    }
+    update:updateOneTally
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
+    app.svc.getTally(function(err,tally){
+      console.log('tally',tally);
+      for (id in tally){
+        updateOneTally(id,tally[id]);
+      }
+    });
     var param=43;
     if (0) setInterval(function(){
         app.svc.zing(param,function (err,result) {
