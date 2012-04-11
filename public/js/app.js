@@ -176,7 +176,38 @@ $(function(){
         });
     },10*1000);
   });
+
+  function genDepouillement(){
+    var $depouillement = $('#depouillement');
+    var stamp=new Date();
+    for (var i=0;i<100;i++){
+      stamp = new Date(stamp.getTime()+13000);
+      var clock = stamp.toISOTime();
+      $v = $('<li><h3>Répondant #'+(i+99001)+'</h3><p>Vote : [v1,v2,v3]</p><p class="ui-li-aside"><strong>'+clock+'</strong></p></li>');
+      $depouillement.append($v);
+    }
+    $depouillement.listview('refresh');
+  };
+  genDepouillement();
 });
+
+if ( !Date.prototype.toISOTime ) {  
+    ( function() {  
+        function pad(number) {  
+            var r = String(number);  
+            if ( r.length === 1 ) {  
+                r = '0' + r;  
+            }  
+            return r;  
+        }  
+        Date.prototype.toISOTime = function() {  
+            return pad( this.getUTCHours() )  
+                + ':' + pad( this.getUTCMinutes() )  
+                + ':' + pad( this.getUTCSeconds() );
+                // + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 );
+        };  
+    }() );  
+}
 
 function info(msg,clear){
   if(clear) $('#console').html('');

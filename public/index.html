@@ -59,84 +59,93 @@
 
 <body>
 
-  <div id="home" data-role="page">
-    <div data-role="header">
-      <h1>Gala Estrie</h1>
-    </div><!-- /header -->
+    <div id="home" data-role="page">
+        <div data-role="header">
+            <a href="#status" data-icon="arrow-l">Scrutin</a>
+            <h1>Gala Estrie</h1>
+            <a href="#winner"  data-iconpos="right" data-icon="arrow-r">Gagnant</a>
+        </div><!-- /header -->
 
-    <div data-role="content">
-      <!-- <div data-role="fieldcontain" >
-      </div> -->
-      <label for="name">Votre nom (ou # Tél.):</label>
-      <input type="text" name="vote-name" id="vote-name" value=""  placeholder="Vivienne Pommerleau" data-theme="a"/>
-      
-      <label for="select-choice-1" class="select">Commerce de détail:</label>
-      <select name="select-choice-1" id="select-choice-1" NOTdata-theme="b" data-mini="true">
-         <option value="0">Faites votre prédiction</option>
-         <option value="1">COOP UdeS</option>
-         <option value="2">McDONALDS</option>
-      </select>
-      <label for="select-choice-2" class="select">Petite entreprise:</label>
-      <select name="select-choice-2" id="select-choice-2" data-theme="b">
-         <option value="0">Faites votre prédiction</option>
-         <option value="1">MOTO SUR 2 ROUES</option>
-         <option value="2">PMC TIRE.COM</option>
-         <option value="3">VOODOO</option>
-      </select>
-      <label for="select-choice-3" class="select">Entreprise manufacturière:</label>
-      <select name="select-choice-3" id="select-choice-3" data-theme="b">
-         <option value="0">Faites votre prédiction</option>
-         <option value="1">ENERKEM</option>
-         <option value="2">PORTABLE WINCH</option>
-         <option value="3">MAÇONNERIE CORRIVEAU</option>
-      </select>
-            
-      <a class="grevote" href="index.html" data-role="button" data-iconshadow="true" data-icon="check" data-inline="true" NOTdata-theme="a">Votez!</a>
-      
-      <!-- <div class="starblock">
-        <label>Thing:</label>
-        <div class="starvote" data-vote-id="thing"></div>
-      </div>
-      <div class="starblock">
-        <label>Thang:</label>
-        <div class="starvote" data-vote-id="thang"></div>
-      </div> -->
-      
-      <div style="margin-top:150px;" />
-      <div class="testlog">
-      <b>Latest Vote:</b><span id="latestvoteid">--</span>&nbsp;&nbsp;&nbsp;
-      <b>Total votes:</b><span id="totalvotes">--</span>&nbsp;&nbsp;&nbsp;
-      <b>Avg Rating:</b><span id="avgrating">--</span>
-      </div>
+        <div data-role="content">
+            <!-- <div data-role="fieldcontain" >
+            </div> -->
+            <label for="name">Votre nom (ou # Tél.):</label>
+            <input type="text" name="vote-name" id="vote-name" value=""  placeholder="Vivienne Pommerleau" data-theme="a"/>
 
-      <hr>
-      <h4>Results</h4>
-      <div class="resultholder">
-        <!-- <div id="result-thing" class="starblock">
-          <label>Thing:</label>
-          <div class="voteresult"></div>
+            <label for="select-choice-1" class="select">Commerce de détail:</label>
+            <select name="select-choice-1" id="select-choice-1" NOTdata-theme="b" data-mini="true">
+                <option value="0">Faites votre prédiction</option>
+                <option value="1">COOP UdeS</option>
+                <option value="2">McDONALDS</option>
+            </select>
+            <label for="select-choice-2" class="select">Petite entreprise:</label>
+            <select name="select-choice-2" id="select-choice-2" data-theme="b">
+                <option value="0">Faites votre prédiction</option>
+                <option value="1">MOTO SUR 2 ROUES</option>
+                <option value="2">PMC TIRE.COM</option>
+                <option value="3">VOODOO</option>
+            </select>
+            <label for="select-choice-3" class="select">Entreprise manufacturière:</label>
+            <select name="select-choice-3" id="select-choice-3" data-theme="b">
+                <option value="0">Faites votre prédiction</option>
+                <option value="1">ENERKEM</option>
+                <option value="2">PORTABLE WINCH</option>
+                <option value="3">MAÇONNERIE CORRIVEAU</option>
+            </select>
+
+            <a class="grevote" href="index.html" data-role="button" data-iconshadow="true" data-icon="check" data-inline="true" NOTdata-theme="a">Votez!</a>
+
+            <div style="margin-top:150px;" ></div>
+            <div class="testlog">
+                <b>Latest Vote:</b><span id="latestvoteid">--</span>&nbsp;&nbsp;&nbsp;
+                <b>Total votes:</b><span id="totalvotes">--</span>&nbsp;&nbsp;&nbsp;
+                <b>Avg Rating:</b><span id="avgrating">--</span>
+            </div>
+
+            <hr>
+            <h4>Results</h4>
+            <div class="resultholder">
+            </div>
+        </div><!-- content -->
+
+        <div data-role="footer">
+            <div><label>log: </label> <span id="log">...</span></div>
+        </div><!-- header -->
+
+    </div><!-- /page -->
+
+
+    <div id="status" data-role="page">
+        <div data-role="header">
+            <a href="#home" data-icon="arrow-l">Voter</a>
+            <h1>Gala Estrie (status)</h1>
+            <a href="#winner" data-iconpos="right" data-icon="arrow-r">Gagnant</a>
+        </div><!-- header -->
+        <div data-role="content">
+            <ul id="depouillement" data-role="listview" data-filter="true" data-filter-placeholder="Recherche" data-filter-theme="a" data-theme="a" data-divider-theme="d">
+                <li data-role="list-divider">Votes en date du 2012-04-03<span class="ui-li-count">X</span></li>
+                <li>
+                    <h3>Répondant #00123</h3>
+                    <p>Vote : [v1,v2,v3]</p>
+                    <p class="ui-li-aside"><strong>06:15:21</strong></p>
+                </li>
+            </ul>
         </div>
-        <div id="result-thang" class="starblock">
-          <label>Thang:</label>
-          <div class="voteresult"></div>
-        </div>
-        <div id="result-djembe-product-0-0" class="starblock">
-          <label>Cours de Djembe:</label>
-          <div class="voteresult"></div>
-        </div>
-        <div id="result-djembe-product-0-1" class="starblock">
-          <label>Ventes de Djembes:</label>
-          <div class="voteresult"></div>
-        </div>         -->
-      </div>
-    </div><!-- /content -->
+        <div data-role="footer">
+            <div><label>log: </label> <span id="log">...</span></div>
+        </div><!-- footer -->
+    </div><!-- page -->
 
-    <div data-role="footer">
-      <div><label>log: </label> <span id="log">...</span></div>
-    </div><!-- /header -->
-
-  </div><!-- /page -->
-
+    <div id="winner" data-role="page">
+        <div data-role="header">
+            <a href="#home" data-icon="arrow-l">Voter</a>
+            <h1>Gala Estrie</h1>
+            <a href="#status"  data-iconpos="right" data-icon="arrow-r">Scrutin</a>
+        </div><!-- header -->
+        <div data-role="footer">
+            <div><label>log: </label> <span id="log">...</span></div>
+        </div><!-- footer -->
+    </div><!-- page -->
 
   <!-- JavaScript at the bottom for fast page loading -->
 
