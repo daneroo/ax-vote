@@ -1,4 +1,9 @@
 
+/* override bad jqM theme fonts*/
+div, p, span, li, input {
+  font-family: "Lucida grande", arial, sans-serif !important;
+}
+
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 body, div {
   margin:0;
@@ -25,4 +30,11 @@ div.voteresult {
 .testlog {
   margin-top:15px;
   margin-left:20px;
+}
+
+
+/*Gala Estrie*/
+label.select {
+  margin-top:5px;
+  font-weight:bold;
 }

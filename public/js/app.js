@@ -10,7 +10,8 @@ app.svc=null;
 
 $(function(){
   hideURLBar();
-  $('html').bind('touchmove',function(e){
+  // allow scrolling for now
+  if(0) $('html').bind('touchmove',function(e){
     e.preventDefault();
   });
   
@@ -19,10 +20,63 @@ $(function(){
     MBP.viewportmeta.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";    
     hideURLBar();
   }
+  function validateSelect($select){
+      var value=$select.val();
+      if(value==0) {
+          valid=false;
+          $select.parent().css('border-color','red');
+      } else {
+          $select.parent().css('border-color','');
+      }
+  }
+  function validateThenVote(){
+      var valid=true;
+      var votes=[
+          $('#select-choice-1').val(),
+          $('#select-choice-2').val(),
+          $('#select-choice-3').val()
+      ];
+      var name = $.trim($('#vote-name').val());
+      if(name.length==0) {
+          valid=false;
+          $('#vote-name').css('border-color','red');
+      } else {
+          $('#vote-name').css('border-color','');
+      }
+      $.each([1,2,3],function(i,v){
+          var $select=$('#select-choice-'+v);
+          validateSelect($select);
+      });
+      console.log('name',name,'votes',votes,'valid',valid);
+      
+      $.each([1,2,3],function(i,v){
+          if (1) { //if (Math.random()<.5){
+            // by json
+            $.getJSON("/vote",{id:'vote-Q'+v,rating:votes[i]},function(tally){
+              console.log('json-tally',tally);
+              //displayLatest(tally);
+            });
+          } else {
+            // by dnode
+            app.svc.vote(id,rating,null,function(err,tally){
+              console.log('dnode-tally',tally);
+              // displayLatest(tally);
+            });      
+          }
+      });
+  }
   $(window).bind('orientationchange', orientationChange);
   orientationChange();
 
   console.log('starvote len',$('.starvote').length);
+  
+  // $('.grevote').button('disable');
+  $('.grevote').click(validateThenVote);
+  $('select').change(function(){
+      var $select=$(this);
+      validateSelect($select);
+  });
+  
   $('.starvote').raty({
     path:'/img/raty/',
     start: 0,
