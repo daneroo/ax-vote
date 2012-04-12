@@ -25,6 +25,7 @@ $(function(){
       if(value==0) {
           valid=false;
           $select.parent().css('border-color','red');
+          $select.parent().css('border-width','3px');
       } else {
           $select.parent().css('border-color','');
       }
@@ -40,6 +41,7 @@ $(function(){
       if(name.length==0) {
           valid=false;
           $('#vote-name').css('border-color','red');
+          $('#vote-name').css('border-width','3px');
       } else {
           $('#vote-name').css('border-color','');
       }
@@ -48,7 +50,15 @@ $(function(){
           validateSelect($select);
       });
       console.log('name',name,'votes',votes,'valid',valid);
-      
+
+      if (valid){
+          $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
+          $('.greunvote').show();
+      }
+
+      return false;
+
+      // the actual post
       $.each([1,2,3],function(i,v){
           if (1) { //if (Math.random()<.5){
             // by json
@@ -65,6 +75,11 @@ $(function(){
           }
       });
   }
+  function unVote(){
+      $('.greunvote').hide();
+      $('.grevote').removeClass('ui-disabled').attr('disabled','').find('.ui-btn-text').text('Votez!');
+      // now post the unvote
+  }
   $(window).bind('orientationchange', orientationChange);
   orientationChange();
 
@@ -72,6 +87,7 @@ $(function(){
   
   // $('.grevote').button('disable');
   $('.grevote').click(validateThenVote);
+  $('.greunvote').click(unVote);
   $('select').change(function(){
       var $select=$(this);
       validateSelect($select);
