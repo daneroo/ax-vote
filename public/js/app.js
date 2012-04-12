@@ -20,59 +20,74 @@ $(function(){
     MBP.viewportmeta.content = "width=device-width, minimum-scale=1.0, maximum-scale=1.0";    
     hideURLBar();
   }
+  
+  function showInvalid($el,valid){
+      if(!valid) {
+          valid=false;
+          $el.css('border-color','red');
+          $el.css('border-width','3px');
+      } else {
+          $el.css('border-color','');
+      }
+  }
+  function validateNonempty($input){
+      var value=$.trim($input.val());
+      var valid = value.length!=0;
+      showInvalid($input,valid)
+      return valid;
+  }
   function validateSelect($select){
       var value=$select.val();
-      if(value==0) {
-          valid=false;
-          $select.parent().css('border-color','red');
-          $select.parent().css('border-width','3px');
-      } else {
-          $select.parent().css('border-color','');
-      }
+      var valid= value!=0;
+      showInvalid($select.parent(),valid)
+      return valid;
   }
   function validateThenVote(){
       var valid=true;
-      var votes=[
-          $('#select-choice-1').val(),
-          $('#select-choice-2').val(),
-          $('#select-choice-3').val()
-      ];
-      var name = $.trim($('#vote-name').val());
-      if(name.length==0) {
-          valid=false;
-          $('#vote-name').css('border-color','red');
-          $('#vote-name').css('border-width','3px');
-      } else {
-          $('#vote-name').css('border-color','');
-      }
-      $.each([1,2,3],function(i,v){
-          var $select=$('#select-choice-'+v);
-          validateSelect($select);
+      var answers={labels:{}};
+      $('.quest-q').each(function(){
+          var $this=$(this);
+          var q=$this.data('quest-q')
+          var value=$this.val();
+          var label=q;
+          // validation
+          if ($this.is('select')){
+              valid = validateSelect($this) && valid;
+              value = Number(value);
+              label = $this.find('option:selected').text();
+          } else if ($this.is('input[type=text]')) {
+              valid = validateNonempty($this) && valid;
+              value=$.trim(value);
+              label=q;
+          }
+          answers[q]=value;
+          answers.labels[q]=label;
       });
-      console.log('name',name,'votes',votes,'valid',valid);
+      
+      console.log('name',name,'answers',JSON.stringify(answers),'valid',valid);
 
       if (valid){
           $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
           $('.greunvote').show();
+          if (1) { //if (Math.random()<.5){
+            // by json
+            $.getJSON("/vote",answers,function(tally){
+              console.log('json-tally',tally);
+              //displayLatest(tally);
+            });
+          } else {
+            // by dnode
+            app.svc.vote(answers,null,function(err,tally){
+              console.log('dnode-tally',tally);
+              // displayLatest(tally);
+            });      
+          }
       }
 
       return false;
 
       // the actual post
       $.each([1,2,3],function(i,v){
-          if (1) { //if (Math.random()<.5){
-            // by json
-            $.getJSON("/vote",{id:'vote-Q'+v,rating:votes[i]},function(tally){
-              console.log('json-tally',tally);
-              //displayLatest(tally);
-            });
-          } else {
-            // by dnode
-            app.svc.vote(id,rating,null,function(err,tally){
-              console.log('dnode-tally',tally);
-              // displayLatest(tally);
-            });      
-          }
       });
   }
   function unVote(){
