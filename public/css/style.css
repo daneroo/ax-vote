@@ -32,7 +32,12 @@ div.voteresult {
   margin-left:20px;
 }
 
-
+/* copie de ekomobi/mobile.css */
+h1.ui-title {
+  text-align: left !important;
+  margin: 0.6em 10px 0.8em !important;
+  font-size: 14px !important;
+}
 /*Gala Estrie*/
 label.select {
   margin-top:5px;
