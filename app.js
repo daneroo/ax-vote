@@ -37,12 +37,17 @@ if (0){
 server.use(express.static(__dirname+ '/public'));
 
 var ballots={};
+var skypeHits=1;
 var services = {
   getTally: function(cb){
     cb(null,tally);
   },
   getBallots: function(cb){
     cb(null,ballots);
+  },
+  skypeCount: function(cb){
+    skypeHits++;
+    cb(null,skypeHits);
   },
   vote: function(id,answer,req,cb){
     ballots[id] = ballots[id] || [];
@@ -92,6 +97,11 @@ server.get('/vote', function(req, res){
   // console.log(req.sessionStore);
   services.vote(id,rating,req,function(err,tally){
     res.json(tally);
+  });
+});
+server.get('/skypeCount', function(req, res){
+  services.skypeCount(function(err,skypeHits){
+    res.json(skypeHits);
   });
 });
 
