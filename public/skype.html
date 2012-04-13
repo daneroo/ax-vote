@@ -167,11 +167,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#116d77', end
 <script type="text/javascript" src="http://galareconnaissanceestrie.ekomobi.com/js/klass.min.js"></script>
 <script type="text/javascript" src="http://galareconnaissanceestrie.ekomobi.com/js/code.photoswipe.jquery-3.0.4.min.js"></script>
 <script type="text/javascript">
+  function skypeHits(incr){
+    $.getJSON("/skypeCount",{incr:incr},function(skypeHits){
+      $('#skypeHits').text(skypeHits);
+    });
+  }
   $(function(){
+    skypeHits(0);
     $('button').click(function(){
-      $.getJSON("/skypeCount",function(skypeHits){
-        $('#skypeHits').text(skypeHits);
-      });
+      skypeHits(1);
     });
   });
 </script>

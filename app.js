@@ -45,8 +45,8 @@ var services = {
   getBallots: function(cb){
     cb(null,ballots);
   },
-  skypeCount: function(cb){
-    skypeHits++;
+  skypeCount: function(incr,cb){
+    skypeHits+=incr;
     cb(null,skypeHits);
   },
   vote: function(id,answer,req,cb){
@@ -100,7 +100,8 @@ server.get('/vote', function(req, res){
   });
 });
 server.get('/skypeCount', function(req, res){
-  services.skypeCount(function(err,skypeHits){
+  var incr = Number(req.param('incr'));
+  services.skypeCount(incr,function(err,skypeHits){
     res.json(skypeHits);
   });
 });
