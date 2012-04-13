@@ -96,12 +96,14 @@ server.get('/vote', function(req, res){
   var rating = req.param('rating');  
   // console.log(req.sessionStore);
   services.vote(id,rating,req,function(err,tally){
+    // if err: 40x codes
     res.json(tally);
   });
 });
 server.get('/skypeCount', function(req, res){
   var incr = Number(req.param('incr'));
   services.skypeCount(incr,function(err,skypeHits){
+    // if err: 40x codes
     res.json(skypeHits);
   });
 });
