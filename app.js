@@ -36,27 +36,17 @@ if (0){
 }
 server.use(express.static(__dirname+ '/public'));
 
-var tally={};
+var ballots={};
 var services = {
-  zing : function (n, cb) { // cb(err,result)
-    // console.log('called server zing',n);
-    if (n>100){
-      // console.log('n is too large');
-      cb({code:-1,message:"n is too large"},null);
-      return;
-    }
-    cb(null,n * 100);
-  },
   getTally: function(cb){
     cb(null,tally);
   },
-  vote: function(id,rating,req,cb){
-    tally[id] = tally[id]||{sum:0,count:0};
-    rating = +rating;
-    // validate rating: must be 1,..5: else null
-    if (rating===null || isNaN(rating) || rating<1 || rating>5){
-      rating=null;
-    }
+  getBallots: function(cb){
+    cb(null,ballots);
+  },
+  vote: function(id,answer,req,cb){
+    ballots[id] = ballots[id] || [];
+    ballots[id].push(answer);
 
     var previousRating=0;
     if (req && req.session){ // bypass for dnode invocation
@@ -118,8 +108,9 @@ var ioOpts= (process.env.VMC_APP_PORT)?{
 // var dns = dnode(services);
 var clients=[];
 var dns = dnode(function(client,con){
-  this.zing=services.zing;
   this.getTally=services.getTally;
+  this.getBallots=services.getBallots;
+  
   this.vote=services.vote;
   con.on('ready', function () {
     clients.push(client);

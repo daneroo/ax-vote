@@ -69,6 +69,8 @@ $(function(){
       if (valid){
           $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
           $('.greunvote').show();
+          
+          return false;
           if (1) { //if (Math.random()<.5){
             // by json
             $.getJSON("/vote",answers,function(tally){
