@@ -6,11 +6,6 @@ var express = require('express');
 var server = express.createServer();
 var dnode = require('dnode');
 
-//var orm = require('./lib/orm');
-// not yet, see im-w for example invocation fro services
-
-// if local ?
-//server.use(express.logger());
 server.use(express.cookieParser());
 
 var sessionCookieMaxAge=365*24*60*60*1000; // 1 year
@@ -37,17 +32,16 @@ if (0){
 server.use(express.static(__dirname+ '/public'));
 
 var ballots={};
-var skypeHits=1;
+var skypeHits=0;
+
 var services = {
-  getTally: function(cb){
-    cb(null,tally);
-  },
-  getBallots: function(cb){
-    cb(null,ballots);
-  },
   skypeCount: function(incr,cb){
     skypeHits+=incr;
     cb(null,skypeHits);
+  },
+
+  getBallots: function(cb){
+    cb(null,ballots);
   },
   vote: function(id,answer,req,cb){
     ballots[id] = ballots[id] || [];
@@ -85,11 +79,7 @@ var services = {
   }
 };
 
-jsonrpc_services = require('connect-jsonrpc')(services);
-server.post('/jsonrpc', function(req, res, next){
-  jsonrpc_services(req,res,next);    
-});
-
+// straight json responses - params ?
 server.enable("jsonp callback");
 server.get('/vote', function(req, res){
   var id = req.param('id');
