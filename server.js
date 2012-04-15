@@ -49,6 +49,7 @@ var services = {
   // error checking...
   getAnswers: function(questId,cb){
     var ans = answers[questId] || [];
+    console.log('getA |vote|[',questId,']',ans.length);
     if(cb) cb(null,ans);
   },
   

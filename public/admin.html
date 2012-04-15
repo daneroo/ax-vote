@@ -65,7 +65,14 @@
             <a href="#winner" class="ui-btn-right" data-iconpos="right" data-icon="arrow-r">Gagnant</a>
         </div><!-- header -->
         <div data-role="content">
-            <div>Votes Skype: <span style="color:#0ABBD7;font-weight:bold" id="skypeHits">--</span></div>
+            <div data-theme="b" class="ui-grid-a" style="margin:10px 0px">
+                <div class="ui-block-a">
+                    <div>Pr&eacute;dictions: <span style="color:#0ABBD7;font-weight:bold" id="predictionHits">--</span></div>
+                </div>
+                <div class="ui-block-b">
+                    <div>Votes Skype: <span style="color:#0ABBD7;font-weight:bold" id="skypeHits">--</span></div>
+                </div>
+            </div><!-- /grid-b -->
 
             <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
                 <h3>Repartition</h3>
@@ -75,59 +82,33 @@
                     </div>
                     <div class="ui-block-b"><p>Petite Entr.</p>
                         <img class="chart-pme" >
-                        </div>
+                    </div>
                     <div class="ui-block-c"><p>Manufact.</p>
                         <img class="chart-manufact" >
                     </div>
                 </div><!-- /grid-b -->
             </div>
 
+            <div data-role="collapsible" data-theme="b" data-content-theme="b">
+                <h3>Sélection Gagnants</h3>
+                <div>
+                    <a class="refreshWinner" data-role="button" data-iconshadow="true" data-icon="refresh" data-inline="true" >Mise a Jour</a>
+                    <a class="selectWinner" data-role="button" data-iconshadow="true" data-icon="star" data-inline="true" >Sélection</a>
+                </div>
+            </div>
 
             <div data-role="collapsible" data-theme="b" data-content-theme="b">
                 <h3>Scrutin Complet</h3>
                 <ul style="padding-bottom:10px" id="depouillement" data-role="listview" data-filter="true" data-filter-placeholder="Recherche" data-filter-theme="d" data-theme="b" data-divider-theme="d">
                     <li data-role="list-divider">Votes en date du 2012-04-03<span class="ui-li-count">1</span></li>
                     <li>
-                        <h3>Répondant #00123</h3>
+                        <h3>Répondant #00001</h3>
                         <p>Vote : [v1,v2,v3]</p>
                         <p class="ui-li-aside"><strong>20:15:21</strong></p>
                     </li>
                     <li data-role="list-divider">Votes en date du 2012-04-03<span class="ui-li-count">2</span></li>
                 </ul>
             </div>
-        </div><!-- content -->
-        <div data-role="footer">
-            <div><label>log: </label> <span id="log">...</span></div>
-        </div><!-- footer -->
-    </div><!-- page -->
-
-    <div id="winner" data-role="page">
-        <div data-role="header">
-            <h1>Gala reconnaissance Estrie</h1>
-            <a href="#status" class="ui-btn-right" data-direction="reverse" data-iconpos="left" data-icon="arrow-l">Scrutin</a>
-        </div><!-- header -->
-        <div data-role="content">
-            <!-- 
-             Playground: https://developers.google.com/chart/image/docs/chart_playground
-             seed with http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:25,100,50
-            -->
-
-            <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
-                <h3>Repartition</h3>
-                <div data-theme="b" class="ui-grid-b" style="margin:10px 0px">
-                    <div class="ui-block-a"><p>Comm. détail</p>
-                        <img class="chart-detail" >
-                    </div>
-                    <div class="ui-block-b"><p>Petite Entr.</p>
-                        <img class="chart-pme" >
-                        </div>
-                    <div class="ui-block-c"><p>Manufact.</p>
-                        <img class="chart-manufact" >
-                    </div>
-                </div><!-- /grid-b -->
-            </div>
-
-
         </div><!-- content -->
         <div data-role="footer">
             <div><label>log: </label> <span id="log">...</span></div>

@@ -7,6 +7,9 @@ function hideURLBar(){
 
 var app = app || {};
 app.svc=null;
+app.counters={}
+app.counters={}; // counter by Name
+app.answers={}; // answer arrays by questId
 
 $(function(){
   hideURLBar();
@@ -43,41 +46,81 @@ $(function(){
       $('#log').text(msg);
     },
     updateCount:function(name,count){
-      console.log('got updateCount',name,count);    
+      console.log('got updateCount',name,count);
+      app.counters[name]=count;
       $('#skypeHits').text(count);      
     },
     updateVote:function(questId,answer){
       console.log('got updateVote',questId,answer);
+      app.answers[questId] = app.answers[questId] || [];
+      app.answers[questId].push(answer);
       appendVoteToListView(answer);    
-      randHistos();
+      renderHistos();
     }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
     app.svc.count('skype',0); // no callback, broadcast will get it
-    randHistos();
+    renderHistos();
+    var answerKey='gre-predictions';    
+    app.svc.getAnswers(answerKey,function(err,answers){
+      console.log('got answers',answerKey,(answers.length)?answers.length:0);
+      app.answers[answerKey]=answers;
+      renderHistos();
+      batchUpdateListView(answers);
+    })
   });
 
-  function appendVoteToListView(answer){
+  function batchUpdateListView(answers){
+    var $depouillement = $('#depouillement');
+    $depouillement.html('');
+    $.each(answers,function(i,answer){      
+      appendVoteToListView(answer,true);
+    });
+    $depouillement.listview('refresh');
+  }
+  function appendVoteToListView(answer,skipRefresh){
     var $depouillement = $('#depouillement');
     var stamp=new Date();
     var clock = stamp.toISOTime();
-    // $v = $('<li><h3>Répondant #'+(i+99001)+'</h3><p>Vote : [v1,v2,v3]</p><p class="ui-li-aside"><strong>'+clock+'</strong></p></li>');
     $v = $('<li></li>');
     $v.append($('<h3/>').text(answer.name));
     $v.append($('<p class="ui-li-aside"/>').html('<strong>'+clock+'</strong>'));
-    $depouillement.append($v);
-    $depouillement.listview('refresh');
+    var labels=[answer.labels.detail||'',answer.labels.pme||'',answer.labels.manufact||'',]
+    $v.append('<p>Vote : '+labels.join(', ')+'</p>');
+    
+    $depouillement.prepend($v);
+    if (skipRefresh!==true){
+      $depouillement.listview('refresh');
+    }
   }
   function r(max){
     max = max||100;
     return Math.floor(Math.random()*max);
   }
-  function randHistos(){
-    updateHisto('detail',[r(),r()]);
-    updateHisto('pme',[r(),r(),r()]);
-    updateHisto('manufact',[r(),r(),r()]);
+  function renderHistos(){
+    var answerKey='gre-predictions';
+    var answers = app.answers[answerKey];
+    $('#predictionHits').text((answers && answers.length)?answers.length:0);      
+    $.each(['detail','pme','manufact'],function(i,q){
+      // var histo=[r(),r()];
+      var histo=[0,0,0];
+      if (answers){
+        // console.log('render histo',answerKey,q,answers.length);
+        $.each(answers,function(j,a){
+          // console.log(q,a.name,a[q]);
+          if (a[q] && a[q]>0 && a[q]<4){
+            histo[a[q]-1]++;
+          }
+        })
+      }
+      if (q=='detail' && histo[2]==0) { // truncate detail
+        histo = [histo[0],histo[1]];
+      }
+      updateHisto(q,histo);
+    });
   }
   function updateHisto(name,distr){
+    console.log('updateHisto',name,distr);
     var max=1;
     var w=130,h=60;
     var distr=distr||[1,2,3];
@@ -107,7 +150,7 @@ $(function(){
     });
     var src = 'http://chart.googleapis.com/chart?'+params.join('&');
     $('.chart-'+name).attr('src',src)
-    console.log('chart url',src);
+    // console.log('chart url',src);
   }
   function genDepouillement(){
     var $depouillement = $('#depouillement');
