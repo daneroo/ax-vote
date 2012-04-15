@@ -49,13 +49,12 @@ $(function(){
     updateVote:function(questId,answer){
       console.log('got updateVote',questId,answer);
       appendVoteToListView(answer);    
+      randHistos();
     }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
     app.svc.count('skype',0); // no callback, broadcast will get it
-    updateHisto('detail',[1,2]);
-    updateHisto('pme',[3,4,5]);
-    updateHisto('manufact',[6,7,8]);
+    randHistos();
   });
 
   function appendVoteToListView(answer){
@@ -69,11 +68,19 @@ $(function(){
     $depouillement.append($v);
     $depouillement.listview('refresh');
   }
-  //function updateGraphs(){
-  window.updateHisto = function (name,distr){
+  function r(max){
+    max = max||100;
+    return Math.floor(Math.random()*max);
+  }
+  function randHistos(){
+    updateHisto('detail',[r(),r()]);
+    updateHisto('pme',[r(),r(),r()]);
+    updateHisto('manufact',[r(),r(),r()]);
+  }
+  function updateHisto(name,distr){
     var max=1;
     var w=130,h=60;
-    var distr=distr||[0,20,40,90,60];
+    var distr=distr||[1,2,3];
     
     // find max
     $.each(distr,function(i,x){
