@@ -66,6 +66,7 @@
         </div><!-- header -->
         <div data-role="content">
             <div>Votes Skype: <span style="color:#0ABBD7;font-weight:bold" id="skypeHits">--</span></div>
+
             <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
                 <h3>Repartition</h3>
                 <div data-theme="b" class="ui-grid-b" style="margin:10px 0px">
@@ -110,9 +111,23 @@
              Playground: https://developers.google.com/chart/image/docs/chart_playground
              seed with http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:25,100,50
             -->
-            <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:25,100,50">
-            <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:100,25,50">
-            <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:50,25,100">
+
+            <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
+                <h3>Repartition</h3>
+                <div data-theme="b" class="ui-grid-b" style="margin:10px 0px">
+                    <div class="ui-block-a"><p>Comm. détail</p>
+                        <img class="chart-detail" >
+                    </div>
+                    <div class="ui-block-b"><p>Petite Entr.</p>
+                        <img class="chart-pme" >
+                        </div>
+                    <div class="ui-block-c"><p>Manufact.</p>
+                        <img class="chart-manufact" >
+                    </div>
+                </div><!-- /grid-b -->
+            </div>
+
+
         </div><!-- content -->
         <div data-role="footer">
             <div><label>log: </label> <span id="log">...</span></div>
