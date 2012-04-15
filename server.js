@@ -49,7 +49,7 @@ var services = {
   // error checking...
   getAnswers: function(questId,cb){
     var ans = answers[questId] || [];
-    console.log('getA |vote|[',questId,']',ans.length);
+    // console.log('getA |vote|[',questId,']',ans.length);
     if(cb) cb(null,ans);
   },
   
@@ -59,7 +59,7 @@ var services = {
     answers[questId] = answers[questId] || [];
     answers[questId].push(answer);
 
-    console.log('|vote|[',questId,']',answers[questId].length);
+    // console.log('|vote|[',questId,']',answers[questId].length);
     if(cb) cb(null,answers[questId].length);
     var message = 'new VOTE['+questId+']='+JSON.stringify(answer);
     broadcast(message,'vote',questId,answer);
@@ -119,7 +119,7 @@ function broadcast(msg,type,id,thing){
   clients.forEach(function(client){
     client.log(msg);
     if (type=='count'){
-      console.log('bcast update count',id,thing);
+      // console.log('bcast update count',id,thing);
       client.updateCount(id,thing);
     } else if (type=='vote' && id && thing){
       client.updateVote(id,thing);

@@ -152,18 +152,6 @@ $(function(){
     $('.chart-'+name).attr('src',src)
     // console.log('chart url',src);
   }
-  function genDepouillement(){
-    var $depouillement = $('#depouillement');
-    var stamp=new Date();
-    for (var i=0;i<2;i++){
-      stamp = new Date(stamp.getTime()+13000);
-      var clock = stamp.toISOTime();
-      $v = $('<li><h3>Répondant #'+(i+99001)+'</h3><p>Vote : [v1,v2,v3]</p><p class="ui-li-aside"><strong>'+clock+'</strong></p></li>');
-      $depouillement.append($v);
-    }
-    $depouillement.listview('refresh');
-  };
-  genDepouillement();
 });
 
 if ( !Date.prototype.toISOTime ) {  
