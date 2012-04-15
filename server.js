@@ -31,22 +31,40 @@ if (0){
 }
 server.use(express.static(__dirname+ '/public'));
 
-var ballots={};
-var skypeHits=0;
+var counters={}; // counter by Name
+var answers={}; // answer arrays by questId
 
 var services = {
-  skypeCount: function(incr,cb){
-    skypeHits+=incr;
-    cb(null,skypeHits);
+  // incrments named counters use incr=0 to get current count
+  // later split incr/get/reset with security
+  count: function(name,incr,cb){
+    counters[name] = counters[name] || 0;
+    counters[name]+=incr;
+    if(cb) cb(null,counters[name]);
+    // broadcast...
+    var message = 'hit count['+name+']='+counters[name]
+    broadcast(message,'count',name,counters[name]);
   },
 
-  getBallots: function(cb){
-    cb(null,ballots);
+  // error checking...
+  getAnswers: function(questId,cb){
+    var ans = answers[questId] || [];
+    if(cb) cb(null,ans);
   },
-  vote: function(id,answer,req,cb){
-    ballots[id] = ballots[id] || [];
-    ballots[id].push(answer);
+  
+  vote: function(questId,answer,cb){
+    // console.log('vote','q',questId,'a',answer);
 
+    answers[questId] = answers[questId] || [];
+    answers[questId].push(answer);
+
+    console.log('|vote|[',questId,']',answers[questId].length);
+    if(cb) cb(null,answers[questId].length);
+    var message = 'new VOTE['+questId+']='+JSON.stringify(answer);
+    broadcast(message,'vote',questId,answer);
+    // broadcast(message);
+    return;
+    
     var previousRating=0;
     if (req && req.session){ // bypass for dnode invocation
       req.session.votes = req.session.votes || {};
@@ -58,44 +76,12 @@ var services = {
       }
     }
 
-    if (previousRating){
-      tally[id].count--;
-      tally[id].sum-=previousRating;
-    }
-    if (rating){
-      tally[id].count++;
-      tally[id].sum+=rating;
-    }
-    var message='nothing happened'
-    if (previousRating && rating){
-      message='somone replaced their rating for: '+id+' rating: '+rating+' previous rating:'+previousRating;
-    } else if (rating){
-      message='somone rated: '+id+' with a rating of: '+rating;
-    } else if (previousRating){
-      message='somone removed their rating for: '+id+' previous rating:'+previousRating;
-    }
-    broadcast(message,id,tally[id]);
-    cb(null,tally[id]);
   }
 };
 
-// straight json responses - params ?
-server.enable("jsonp callback");
-server.get('/vote', function(req, res){
-  var id = req.param('id');
-  var rating = req.param('rating');  
-  // console.log(req.sessionStore);
-  services.vote(id,rating,req,function(err,tally){
-    // if err: 40x codes
-    res.json(tally);
-  });
-});
-server.get('/skypeCount', function(req, res){
-  var incr = Number(req.param('incr'));
-  services.skypeCount(incr,function(err,skypeHits){
-    // if err: 40x codes
-    res.json(skypeHits);
-  });
+jsonrpc_services = require('connect-jsonrpc')(services);
+server.post('/jsonrpc', function(req, res, next){
+  jsonrpc_services(req,res,next);    
 });
 
 var ioOpts= (process.env.VMC_APP_PORT)?{
@@ -111,10 +97,10 @@ var ioOpts= (process.env.VMC_APP_PORT)?{
 // var dns = dnode(services);
 var clients=[];
 var dns = dnode(function(client,con){
-  this.getTally=services.getTally;
-  this.getBallots=services.getBallots;
-  
+  this.count=services.count;
   this.vote=services.vote;
+  this.getAnswers=services.getAnswers;
+
   con.on('ready', function () {
     clients.push(client);
     broadcast('added a client: '+clients.length);
@@ -127,11 +113,15 @@ var dns = dnode(function(client,con){
   });
 });
 
-function broadcast(msg,id,tally){
+function broadcast(msg,type,id,thing){
+  // console.log('bcast[type,id,thing]',type,id,thing);
   clients.forEach(function(client){
     client.log(msg);
-    if (id && tally){
-      client.update(id,tally);
+    if (type=='count'){
+      console.log('bcast update count',id,thing);
+      client.updateCount(id,thing);
+    } else if (type=='vote' && id && thing){
+      client.updateVote(id,thing);
     }
   });
 }

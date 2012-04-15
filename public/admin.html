@@ -61,24 +61,38 @@
 
     <div id="status" data-role="page">
         <div data-role="header">
-            <a href="#home" data-icon="arrow-l">Voter</a>
-            <h1>Gala Estrie (status)</h1>
-            <a href="#winner" data-iconpos="right" data-icon="arrow-r">Gagnant</a>
+            <h1>Gala reconnaissance Estrie</h1>
+            <a href="#winner" class="ui-btn-right" data-iconpos="right" data-icon="arrow-r">Gagnant</a>
         </div><!-- header -->
         <div data-role="content">
-            <div style="margin-bottom:20px">
-                <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:25,100,50">
-                <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:100,25,50">
-                <img src="http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:50,25,100">
+            <div>Votes Skype: <span style="color:#0ABBD7;font-weight:bold" id="skypeHits">--</span></div>
+            <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
+                <h3>Repartition</h3>
+                <div data-theme="b" class="ui-grid-b" style="margin:10px 0px">
+                    <div class="ui-block-a"><p>Comm. détail</p>
+                        <img class="chart-detail" >
+                    </div>
+                    <div class="ui-block-b"><p>Petite Entr.</p>
+                        <img class="chart-pme" >
+                        </div>
+                    <div class="ui-block-c"><p>Manufact.</p>
+                        <img class="chart-manufact" >
+                    </div>
+                </div><!-- /grid-b -->
             </div>
-            <ul id="depouillement" data-role="listview" data-filter="true" data-filter-placeholder="Recherche" data-filter-theme="a" data-theme="a" data-divider-theme="d">
-                <li data-role="list-divider">Votes en date du 2012-04-03<span class="ui-li-count">X</span></li>
-                <li>
-                    <h3>Répondant #00123</h3>
-                    <p>Vote : [v1,v2,v3]</p>
-                    <p class="ui-li-aside"><strong>06:15:21</strong></p>
-                </li>
-            </ul>
+
+
+            <div data-role="collapsible" data-theme="b" data-content-theme="b">
+                <h3>Scrutin Complet</h3>
+                <ul id="depouillement" data-role="listview" data-filter="true" data-filter-placeholder="Recherche" data-filter-theme="b" data-theme="b" data-divider-theme="d">
+                    <li data-role="list-divider">Votes en date du 2012-04-03<span class="ui-li-count">X</span></li>
+                    <li>
+                        <h3>Répondant #00123</h3>
+                        <p>Vote : [v1,v2,v3]</p>
+                        <p class="ui-li-aside"><strong>20:15:21</strong></p>
+                    </li>
+                </ul>
+            </div>
         </div><!-- content -->
         <div data-role="footer">
             <div><label>log: </label> <span id="log">...</span></div>
@@ -87,9 +101,8 @@
 
     <div id="winner" data-role="page">
         <div data-role="header">
-            <a href="#home" data-icon="arrow-l">Voter</a>
-            <h1>Gala Estrie</h1>
-            <a href="#status"  data-iconpos="right" data-icon="arrow-r">Scrutin</a>
+            <h1>Gala reconnaissance Estrie</h1>
+            <a href="#status" class="ui-btn-right" data-direction="reverse" data-iconpos="left" data-icon="arrow-l">Scrutin</a>
         </div><!-- header -->
         <div data-role="content">
             <!-- 

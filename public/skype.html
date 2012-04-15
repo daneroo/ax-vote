@@ -133,29 +133,29 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#116d77', end
 </style>
 </head>
 <body>
-<div data-role="page" id="vote" data-url="vote">
-	<div data-role="header" data-position="inline">
-		<a href="http://galareconnaissanceestrie.ekomobi.com/" data-direction="reverse" data-theme="c" data-iconpos="left" data-icon="home">Gala reconnaissance Estrie</a>
-		<h1></h1>
-	</div>
-	<div data-role="content">
-		<img id="logoGRE" src="img/gre.png" /><br/>
-		<div>Votes: <span id="skypeHits">--</span></div>
-		<div class="leftCol">
-				<button data-icon="check">Japon</button>
-				<button data-icon="check">Australie</button>
-		</div>
-		<div class="rightCol">
-				<button data-icon="check">Danemark</button>
-				<button data-icon="check">Maroc</button>
-		</div>
-		<p style="text-align: center; font-size: 20px !important; font-variant: small-caps;">
-			propulsé par
-			<br />
-			<a href="http://ekomobi.com" rel="external"><img alt="ekomobi" src="http://galareconnaissanceestrie.ekomobi.com/images/ekomobi-white.png"></a>
-		</p>
-	</div>
-</div>
+  <div data-role="page" id="vote" data-url="vote">
+    <div data-role="header" data-position="inline">
+      <a href="http://galareconnaissanceestrie.ekomobi.com/" data-direction="reverse" data-theme="c" data-iconpos="left" data-icon="home">Gala reconnaissance Estrie</a>
+      <h1></h1>
+    </div>
+    <div data-role="content">
+      <img id="logoGRE" src="img/gre.png" /><br/>
+      <div>Votes: <span style="color:#0ABBD7;font-weight:bold" id="skypeHits">--</span></div>
+      <div class="leftCol">
+        <button data-icon="check">Japon</button>
+        <button data-icon="check">Australie</button>
+      </div>
+      <div class="rightCol">
+        <button data-icon="check">Danemark</button>
+        <button data-icon="check">Maroc</button>
+      </div>
+      <p style="text-align: center; font-size: 20px !important; font-variant: small-caps;">
+        propulsé par
+        <br />
+        <a href="http://ekomobi.com" rel="external"><img alt="ekomobi" src="http://galareconnaissanceestrie.ekomobi.com/images/ekomobi-white.png"></a>
+      </p>
+    </div>
+  </div>
 <script type="text/javascript" src="http://galareconnaissanceestrie.ekomobi.com/js/loader.js"></script>
 <script type="text/javascript">site={name:"galareconnaissanceestrie", gaid:"undefined"};</script>
 <!--<script type="text/javascript">ekoM.load(ekoM.scriptset.stat);</script>-->
@@ -167,9 +167,12 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#116d77', end
 <script type="text/javascript" src="http://galareconnaissanceestrie.ekomobi.com/js/klass.min.js"></script>
 <script type="text/javascript" src="http://galareconnaissanceestrie.ekomobi.com/js/code.photoswipe.jquery-3.0.4.min.js"></script>
 <script type="text/javascript">
+  
   function skypeHits(incr){
-    $.getJSON("/skypeCount",{incr:incr},function(skypeHits){
-      $('#skypeHits').text(skypeHits);
+    var name='skype';
+    var endpoint='/jsonrpc';
+    jsonRPC(endpoint,'count',[name,incr],function(json) {
+      $('#skypeHits').text(json.result);
     });
   }
   $(function(){
@@ -178,6 +181,26 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#116d77', end
       skypeHits(1);
     });
   });
+
+  // jsonRPC invocation helper
+  var jsonRPCId=42; // jsonRPC invocation counter
+  function jsonRPC(endpoint,method,paramsArray,successCB){
+    var data = { 
+      jsonrpc: "2.0",
+      method: method,
+      params: paramsArray, 
+      id:(++jsonRPCId) 
+    };
+    $.ajax({
+      type: 'POST',
+      dataType: 'json',
+      contentType: 'application/json',
+      url: endpoint,
+      data: JSON.stringify(data),
+      success: successCB
+    });
+  }
+
 </script>
 	</body>
 	</html>

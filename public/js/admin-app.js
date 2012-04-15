@@ -21,96 +21,9 @@ $(function(){
     hideURLBar();
   }
   
-  function showInvalid($el,valid){
-      if(!valid) {
-          valid=false;
-          $el.css('border-color','red');
-          $el.css('border-width','3px');
-      } else {
-          $el.css('border-color','');
-      }
-  }
-  function validateNonempty($input){
-      var value=$.trim($input.val());
-      var valid = value.length!=0;
-      showInvalid($input,valid)
-      return valid;
-  }
-  function validateSelect($select){
-      var value=$select.val();
-      var valid= value!=0;
-      showInvalid($select.parent(),valid)
-      return valid;
-  }
-  function validateThenVote(){
-      var valid=true;
-      var answers={labels:{}};
-      $('.quest-q').each(function(){
-          var $this=$(this);
-          var q=$this.data('quest-q')
-          var value=$this.val();
-          var label=q;
-          // validation
-          if ($this.is('select')){
-              valid = validateSelect($this) && valid;
-              value = Number(value);
-              label = $this.find('option:selected').text();
-          } else if ($this.is('input[type=text]')) {
-              valid = validateNonempty($this) && valid;
-              value=$.trim(value);
-              label=q;
-          }
-          answers[q]=value;
-          answers.labels[q]=label;
-      });
-      
-      console.log('name',name,'answers',JSON.stringify(answers),'valid',valid);
-
-      if (valid){
-          $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
-          $('.greunvote').show();
-          
-          return false;
-          if (1) { //if (Math.random()<.5){
-            // by json
-            $.getJSON("/vote",answers,function(tally){
-              console.log('json-tally',tally);
-              //displayLatest(tally);
-            });
-          } else {
-            // by dnode
-            app.svc.vote(answers,null,function(err,tally){
-              console.log('dnode-tally',tally);
-              // displayLatest(tally);
-            });      
-          }
-      }
-
-      return false;
-
-      // the actual post
-      $.each([1,2,3],function(i,v){
-      });
-  }
-  function unVote(){
-      $('.greunvote').hide();
-      $('.grevote').removeClass('ui-disabled').attr('disabled','').find('.ui-btn-text').text('Votez!');
-      // now post the unvote
-      return false;
-  }
   $(window).bind('orientationchange', orientationChange);
   orientationChange();
 
-  console.log('starvote len',$('.starvote').length);
-  
-  // $('.grevote').button('disable');
-  $('.grevote').click(validateThenVote);
-  $('.greunvote').click(unVote);
-  $('select').change(function(){
-      var $select=$(this);
-      validateSelect($select);
-  });
-  
   // just sort the divs...
   function reorderResults(){
     ids=[];
@@ -123,42 +36,76 @@ $(function(){
       $('#'+id).appendTo($rh);
     });
   }  
-  function updateOneTally(id,tally){
-    console.log('new tally for',id,tally);
-    var avg = tally.sum/tally.count;
-    var avg = Math.round(avg*10)/10;
-    $resblock=$('#result-'+id);
-    if ($resblock.length===0){
-      $resblock = $('<div id="result-'+id+'" class="starblock" />');
-      $resblock.append($('<label />').text(id));
-      $resblock.append($('<div class="voteresult" />'));
-      $('.resultholder').append($resblock);
-    }
-    $r=$('#result-'+id+' .voteresult');
-    $r.html('');
-    $r.raty($.extend({},resultOpts,{start:avg}));
-    reorderResults();
-  };
+  
   DNode({
     log:function(msg){
-      console.log('msg from server',msg);
+      console.log('msg from server: ',msg);
       $('#log').text(msg);
     },
-    update:updateOneTally
+    updateCount:function(name,count){
+      console.log('got updateCount',name,count);    
+      $('#skypeHits').text(count);      
+    },
+    updateVote:function(questId,answer){
+      console.log('got updateVote',questId,answer);
+      appendVoteToListView(answer);    
+    }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
-    app.svc.getTally(function(err,tally){
-      console.log('tally',tally);
-      for (id in tally){
-        updateOneTally(id,tally[id]);
-      }
-    });
+    app.svc.count('skype',0); // no callback, broadcast will get it
+    updateHisto('detail',[1,2]);
+    updateHisto('pme',[3,4,5]);
+    updateHisto('manufact',[6,7,8]);
   });
 
+  function appendVoteToListView(answer){
+    var $depouillement = $('#depouillement');
+    var stamp=new Date();
+    var clock = stamp.toISOTime();
+    // $v = $('<li><h3>Répondant #'+(i+99001)+'</h3><p>Vote : [v1,v2,v3]</p><p class="ui-li-aside"><strong>'+clock+'</strong></p></li>');
+    $v = $('<li></li>');
+    $v.append($('<h3/>').text(answer.name));
+    $v.append($('<p class="ui-li-aside"/>').html('<strong>'+clock+'</strong>'));
+    $depouillement.append($v);
+    $depouillement.listview('refresh');
+  }
+  //function updateGraphs(){
+  window.updateHisto = function (name,distr){
+    var max=1;
+    var w=130,h=60;
+    var distr=distr||[0,20,40,90,60];
+    
+    // find max
+    $.each(distr,function(i,x){
+      if (x>max) max=x;
+    });
+    // normalize max==100
+    $.each(distr,function(i,x){
+      distr[i] = Math.round(x*100/max)
+    });
+    
+    //http://chart.googleapis.com/chart?cht=bvg&chs=130x60&chxt=y&chxl=0:|0|345&chco=4D89F9,C6D9FD&chf=bg,s,00000000&chd=t:25,100,50"
+    opts = {
+      cht:'bvg',
+      chs:''+w+'x'+h,
+      chxt:'y',
+      chxl:'0:|0|'+max,
+      chco:'4D89F9,C6D9FD',
+      chf:'bg,s,00000000',
+      chd:'t:'+distr.join(',')
+    };
+    var params=[];
+    $.each(opts,function(k,v){
+      params.push(k+'='+v)
+    });
+    var src = 'http://chart.googleapis.com/chart?'+params.join('&');
+    $('.chart-'+name).attr('src',src)
+    console.log('chart url',src);
+  }
   function genDepouillement(){
     var $depouillement = $('#depouillement');
     var stamp=new Date();
-    for (var i=0;i<100;i++){
+    for (var i=0;i<2;i++){
       stamp = new Date(stamp.getTime()+13000);
       var clock = stamp.toISOTime();
       $v = $('<li><h3>Répondant #'+(i+99001)+'</h3><p>Vote : [v1,v2,v3]</p><p class="ui-li-aside"><strong>'+clock+'</strong></p></li>');
@@ -170,21 +117,27 @@ $(function(){
 });
 
 if ( !Date.prototype.toISOTime ) {  
-    ( function() {  
-        function pad(number) {  
-            var r = String(number);  
-            if ( r.length === 1 ) {  
-                r = '0' + r;  
-            }  
-            return r;  
-        }  
-        Date.prototype.toISOTime = function() {  
-            return pad( this.getUTCHours() )  
-                + ':' + pad( this.getUTCMinutes() )  
-                + ':' + pad( this.getUTCSeconds() );
-                // + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 );
-        };  
-    }() );  
+  ( function() {  
+    function pad(number) {  
+      var r = String(number);  
+      if ( r.length === 1 ) {  
+        r = '0' + r;  
+      }  
+      return r;  
+    }  
+    Date.prototype.toISOTime = function() {  
+      return pad( this.getHours() )  
+      + ':' + pad( this.getMinutes() )  
+      + ':' + pad( this.getSeconds() );
+      // + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 );
+    };  
+    Date.prototype.toISOUTCTime = function() {  
+      return pad( this.getUTCHours() )  
+      + ':' + pad( this.getUTCMinutes() )  
+      + ':' + pad( this.getUTCSeconds() );
+      // + '.' + String( (this.getUTCMilliseconds()/1000).toFixed(3) ).slice( 2, 5 );
+    };  
+  }() );  
 }
 
 function info(msg,clear){

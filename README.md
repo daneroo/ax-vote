@@ -14,9 +14,10 @@ When it's up, you can find it [here](http://ax-vote.cloudfoundry.com)
 
 
 ## Transport 
-* straight get (json)
-* jsonp
-* dnode
-* json-rpc removed.
+* json-rpc  : skype(skype.html), and vote(index.html) use this
+* must test CORS for json-rpc
+* dnode: admin uses this
 
-  
+## json-rpc test
+
+    curl -H "Content-Type: application/json" -d '{ "jsonrpc": "2.0", "method": "count", "params": ["mycounter",1], "id":2 }' http://localhost:3000/jsonrpc
