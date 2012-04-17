@@ -89,9 +89,44 @@
                 </div><!-- /grid-b -->
             </div>
 
-            <div data-role="collapsible" data-theme="b" data-content-theme="b">
+            <div id="winner-select" data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b">
                 <h3>Sélection Gagnants</h3>
                 <div>
+                    <div data-role="fieldcontain">
+                        <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
+                            <legend>Detail: <span id="show-w-detail">-</span></legend>
+                            <input type="radio" name="w-detail" id="w-detail-0" value="0" checked="checked" />
+                            <label for="w-detail-0">-</label>
+                            <input type="radio" name="w-detail" id="w-detail-1" value="1"  />
+                            <label for="w-detail-1">C</label>
+                            <input type="radio" name="w-detail" id="w-detail-2" value="2"  />
+                            <label for="w-detail-2">M</label>
+                            
+                        </fieldset>
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <legend>PME:</legend>
+                            <input type="radio" name="w-pme" id="w-pme-0" value="0" checked="checked" />
+                            <label for="w-pme-0">-</label>
+                            <input type="radio" name="w-pme" id="w-pme-1" value="1"  />
+                            <label for="w-pme-1">M</label>
+                            <input type="radio" name="w-pme" id="w-pme-2" value="2"  />
+                            <label for="w-pme-2">P</label>
+                            <input type="radio" name="w-pme" id="w-pme-3" value="3"  />
+                            <label for="w-pme-3">V</label>
+                        </fieldset>
+                        <fieldset data-role="controlgroup" data-type="horizontal">
+                            <legend>Manufact:</legend>
+                            <input type="radio" name="w-manufact" id="w-manufact-0" value="0" checked="checked" />
+                            <label for="w-manufact-0">-</label>
+                            <input type="radio" name="w-manufact" id="w-manufact-1" value="1"  />
+                            <label for="w-manufact-1">E</label>
+                            <input type="radio" name="w-manufact" id="w-manufact-2" value="2"  />
+                            <label for="w-manufact-2">P</label>
+                            <input type="radio" name="w-manufact" id="w-manufact-3" value="3"  />
+                            <label for="w-manufact-3">M</label>
+                        </fieldset>
+                    </div>
+                    <div>Candidats Admissibles: <span id="candidats">43</span></div>
                     <a class="refreshWinner" data-role="button" data-iconshadow="true" data-icon="refresh" data-inline="true" >Mise a Jour</a>
                     <a class="selectWinner" data-role="button" data-iconshadow="true" data-icon="star" data-inline="true" >Sélection</a>
                 </div>

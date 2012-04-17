@@ -43,3 +43,17 @@ label.select {
   margin-top:5px;
   font-weight:bold;
 }
+
+/*Gala Estrie Admin Gagnants*/
+#winner-select .ui-field-contain {
+  margin: 1px 0;
+  padding: 1px 0;
+}
+#winner-select fieldset.ui-controlgroup {
+  margin: 1px 0;  
+}
+#winner-select .ui-controlgroup .ui-checkbox label,#winner-select .ui-controlgroup .ui-radio label {
+  font-size: 12px;
+}
+  
+}
