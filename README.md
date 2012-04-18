@@ -2,6 +2,10 @@
 
 This branch is to support the Gala Reconnaissance Estrie live event:
 
+## TODO
+* Ouverture/fermeture
+* Selection des gagnats
+
 ## Initial deployment to cloudfoundry
 When it's up, you can find it [here](http://ax-vote.cloudfoundry.com)
 

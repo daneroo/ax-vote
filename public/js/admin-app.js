@@ -11,6 +11,18 @@ app.counters={}
 app.counters={}; // counter by Name
 app.answers={}; // answer arrays by questId
 
+// specififc for GRE
+var questLabels = {
+  detail:["-","COOP UdeS","McDONALDS"],
+  pme:["-","MOTO SUR 2 ROUES","PMC TIRE.COM","VOODOO"],
+  manufact:["-","ENERKEM","PORTABLE WINCH","MAÇONNERIE CORRIVEAU"],
+}
+var currentWinnerSelection={
+  detail:0,
+  pme:0,
+  manufact:0,
+}
+
 $(function(){
   hideURLBar();
   // allow scrolling for now
@@ -56,6 +68,7 @@ $(function(){
       app.answers[questId].push(answer);
       appendVoteToListView(answer);    
       renderHistos();
+      updateWinnerSelection();
     }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
@@ -67,6 +80,7 @@ $(function(){
       app.answers[answerKey]=answers;
       renderHistos();
       batchUpdateListView(answers);
+      updateWinnerSelection();
     })
   });
 
@@ -85,7 +99,9 @@ $(function(){
     $v = $('<li></li>');
     $v.append($('<h3/>').text(answer.name));
     $v.append($('<p class="ui-li-aside"/>').html('<strong>'+clock+'</strong>'));
-    var labels=[answer.labels.detail||'',answer.labels.pme||'',answer.labels.manufact||'',]
+    //var labels=[answer.labels.detail||'',answer.labels.pme||'',answer.labels.manufact||'',]
+    function lkup(questQ,value){return questLabels[questQ][value]||'';}
+    var labels=[lkup('detail',answer.detail),lkup('pme',answer.pme),lkup('manufact',answer.manufact)];
     $v.append('<p>Vote : '+labels.join(', ')+'</p>');
     
     $depouillement.prepend($v);
@@ -152,6 +168,37 @@ $(function(){
     $('.chart-'+name).attr('src',src)
     // console.log('chart url',src);
   }
+  function updateWinnerSelection(){
+    // console.log('winner selection',JSON.stringify(currentWinnerSelection));
+    $.each(['detail','pme','manufact'],function(i,questQ){
+      var label=questLabels[questQ][currentWinnerSelection[questQ]]||'-';
+      $('#show-w-'+questQ).text(label);
+      eligibleHisto=[0,0,0,0];
+
+      var answerKey='gre-predictions';
+      var answers = app.answers[answerKey];
+      $.each(answers,function(i,a){
+        var nCorrect=0;
+        $.each(['detail','pme','manufact'],function(qi,questQ){
+          if (currentWinnerSelection[questQ]==a[questQ]){
+            nCorrect++;
+          }
+        });
+        eligibleHisto[nCorrect]++;        
+      });
+      
+      $('#candidats').text(eligibleHisto.join(', '));
+    })
+  }
+
+
+  // Section Gagnants
+  $("input[type='radio']").bind( "change", function(event, ui) {
+    var which = $(this).prop('name').substr(2); // w-detail,w-pme
+    currentWinnerSelection[which]=Number($(this).prop('value'));
+    updateWinnerSelection();
+  });
+  
 });
 
 if ( !Date.prototype.toISOTime ) {  

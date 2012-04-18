@@ -93,6 +93,11 @@
                 <h3>Sélection Gagnants</h3>
                 <div>
                     <div data-role="fieldcontain">
+                        <label for="quest-active">Concours Actif:</label>
+                        <select name="quest-active" id="quest-active" data-role="slider" style="font-size: 12px;">
+                            <option  value="0">Fermé</option>
+                            <option selected="selected" value="1">Ouvert</option>
+                        </select>
                         <fieldset data-role="controlgroup" data-type="horizontal" data-mini="true">
                             <legend>Detail: <span id="show-w-detail">-</span></legend>
                             <input type="radio" name="w-detail" id="w-detail-0" value="0" checked="checked" />
@@ -104,7 +109,7 @@
                             
                         </fieldset>
                         <fieldset data-role="controlgroup" data-type="horizontal">
-                            <legend>PME:</legend>
+                            <legend>PME: <span id="show-w-pme">-</span></legend>
                             <input type="radio" name="w-pme" id="w-pme-0" value="0" checked="checked" />
                             <label for="w-pme-0">-</label>
                             <input type="radio" name="w-pme" id="w-pme-1" value="1"  />
@@ -115,7 +120,7 @@
                             <label for="w-pme-3">V</label>
                         </fieldset>
                         <fieldset data-role="controlgroup" data-type="horizontal">
-                            <legend>Manufact:</legend>
+                            <legend>Manufact: <span id="show-w-manufact">-</span></legend>
                             <input type="radio" name="w-manufact" id="w-manufact-0" value="0" checked="checked" />
                             <label for="w-manufact-0">-</label>
                             <input type="radio" name="w-manufact" id="w-manufact-1" value="1"  />
