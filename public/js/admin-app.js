@@ -121,8 +121,7 @@ $(function(){
   }
   function appendVoteToListView(answer,skipRefresh){
     var $depouillement = $('#depouillement');
-    var stamp=new Date();
-    var clock = stamp.toISOTime();
+    var clock = answer.stamp||new Date().toISOTime();
     $v = $('<li></li>');
     $v.append($('<h3/>').text(answer.name));
     $v.append($('<p class="ui-li-aside"/>').html('<strong>'+clock+'</strong>'));
@@ -200,7 +199,7 @@ $(function(){
     // console.log('winner selection',JSON.stringify(currentWinnerSelection));
     $.each(['detail','pme','manufact'],function(i,questQ){
       var label=questLabels[questQ][currentWinnerSelection[questQ]]||'-';
-      $('#show-w-'+questQ).text(label);
+      $('#show-w-'+questQ).text(label.substring(0,5));
       eligibleHisto=[0,0,0,0];
 
       var answerKey='gre-predictions';
@@ -215,10 +214,70 @@ $(function(){
         eligibleHisto[nCorrect]++;        
       });
       
-      $('#candidats').text(eligibleHisto.join(', '));
+      $('#candidats').text(eligibleHisto.reverse().join(': '));
     })
   }
 
+  function selectWinners(){
+    // perhaps refresh first !
+    var answerKey='gre-predictions';
+    var answers = app.answers[answerKey];
+    var winnersByCorrectPredictions=[[],[],[],[]]; // 0,1,2,3 correct prediction
+    $.each(answers,function(i,a){
+      var nCorrect=0;
+      $.each(['detail','pme','manufact'],function(qi,questQ){
+        if (currentWinnerSelection[questQ]==a[questQ]){
+          nCorrect++;
+        }
+      });
+      winnersByCorrectPredictions[nCorrect].push(a);        
+    });
+    // the answers have been classified by bins of correct answers
+    var winnersToSelect=6;
+    var winners=[];
+    $.each([3,2,1,0],function(i,predictions){
+      console.log('looking for winners with',predictions,'correct predictions');
+      var candidates = winnersByCorrectPredictions[predictions];
+      console.log('among',candidates.length,'candidates');
+      while (candidates.length>0 && winners.length<winnersToSelect){
+        console.log('|candidates|',candidates.length,'|winners|',winners.length);
+        var nextWinnerIndex = Math.floor(Math.random()*99991)%candidates.length;
+        var winner = candidates[nextWinnerIndex];
+        // remove the winning entry...
+        candidates.splice(nextWinnerIndex, 1); 
+        console.log('winner',winner);
+        winner.predictions=predictions;
+        winners.push(winner);
+      }
+    });
+    console.log(winners);
+    var $winnersList = $('#selectedWinnerList');
+    $winnersList.html('');
+    var lastWinnerPredictions=999;
+    var alternateMarkerIndex=3;
+    $.each(winners,function(i,answer){
+      if (i==0 || i==alternateMarkerIndex || lastWinnerPredictions!=answer.predictions ){
+        var kind = (i<alternateMarkerIndex)?"Gagnants":"Alternatifs";
+        $h = $('<li data-role="list-divider"/>').text(kind);
+        
+        $h.append($('<span class="ui-li-count" />').text(answer.predictions+' rép'));
+        $winnersList.append($h);
+        lastWinnerPredictions = answer.predictions;
+      }
+      var clock = answer.stamp||new Date().toISOTime();
+      $v = $('<li></li>');
+      $v.append($('<h3/>').text(answer.name));
+      $v.append($('<p class="ui-li-aside"/>').html('<strong>'+clock+'</strong>'));
+      //var labels=[answer.labels.detail||'',answer.labels.pme||'',answer.labels.manufact||'',]
+      function lkup(questQ,value){return questLabels[questQ][value]||'';}
+      var labels=[lkup('detail',answer.detail),lkup('pme',answer.pme),lkup('manufact',answer.manufact)];
+      $v.append('<p>Vote : '+labels.join(', ')+'</p>');
+      $v.append($('<p/>').text('Id:'+answer.voterId));
+
+      $winnersList.append($v);
+    })
+    $winnersList.listview('refresh');
+  }
 
   // Contest state
   $('#quest-active').bind( "change", function(event, ui) {
@@ -232,6 +291,8 @@ $(function(){
     currentWinnerSelection[which]=Number($(this).prop('value'));
     updateWinnerSelection();
   });
+  
+  $('.selectWinners').bind("click",selectWinners)
   
 });
 

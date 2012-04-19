@@ -74,7 +74,7 @@
                 </div>
             </div><!-- /grid-b -->
 
-            <div data-role="collapsible" data-collapsed="false" data-theme="b" data-content-theme="b" >
+            <div data-role="collapsible" data-collapsed="true" data-theme="b" data-content-theme="b" >
                 <h3>Repartition</h3>
                 <div data-theme="b" class="ui-grid-b" style="margin:10px 0px">
                     <div class="ui-block-a"><p>Comm. détail</p>
@@ -120,7 +120,7 @@
                             <label for="w-pme-3">V</label>
                         </fieldset>
                         <fieldset data-role="controlgroup" data-type="horizontal">
-                            <legend>Manufact: <span id="show-w-manufact">-</span></legend>
+                            <legend>Manu: <span id="show-w-manufact">-</span></legend>
                             <input type="radio" name="w-manufact" id="w-manufact-0" value="0" checked="checked" />
                             <label for="w-manufact-0">-</label>
                             <input type="radio" name="w-manufact" id="w-manufact-1" value="1"  />
@@ -131,9 +131,19 @@
                             <label for="w-manufact-3">M</label>
                         </fieldset>
                     </div>
-                    <div>Candidats Admissibles: <span id="candidats">43</span></div>
-                    <a class="refreshWinner" data-role="button" data-iconshadow="true" data-icon="refresh" data-inline="true" >Mise a Jour</a>
-                    <a class="selectWinner" data-role="button" data-iconshadow="true" data-icon="star" data-inline="true" >Sélection</a>
+                    <div>Candidats Admissibles [# predictions 3:2:1:0]: <span id="candidats">--</span></div>
+                    <!-- <a class="refreshWinner" data-role="button" data-iconshadow="true" data-icon="refresh" data-inline="true" >Mise a Jour</a> -->
+                    <a class="selectWinners" data-role="button" data-iconshadow="true" data-icon="star" data-inline="true" >Sélection</a>
+                    <ul style="padding:10px 0" id="selectedWinnerList" data-role="listview" data-theme="b" data-divider-theme="d">
+                        <li data-role="list-divider">Gagnants<span class="ui-li-count">3 rép</span></li>
+                        <li data-role="list-divider">Gagnants<span class="ui-li-count">2 rép</span></li>
+                        <li data-role="list-divider">Alternatifs<span class="ui-li-count">2 rép</span></li>
+                        <!-- <li>
+                            <h3>Répondant #00001</h3>
+                            <p>Vote : [v1,v2,v3]</p>
+                            <p class="ui-li-aside"><strong>20:15:21</strong></p>
+                        </li> -->
+                    </ul>
                 </div>
             </div>
 

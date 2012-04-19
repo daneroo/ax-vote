@@ -87,7 +87,7 @@ var services = {
       return;
     }
 
-
+    answer.stamp=new Date().toISOString();
     answers[questId] = answers[questId] || [];
     answers[questId].push(answer);
 
