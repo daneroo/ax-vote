@@ -27,6 +27,11 @@ div.voteresult {
   display:inline-block;
 }
 
+div.statusMessage {
+  text-align: center;
+  color:#f70;
+}
+
 .testlog {
   margin-top:15px;
   margin-left:20px;
@@ -59,4 +64,7 @@ label.select {
 #winner-select .ui-slider  span {
   font-size: 14px;
 }
-  
+
+#scrutin-complet .ui-li .ui-btn-inner a.ui-link-inherit, #scrutin-complet .ui-li-static.ui-li {
+padding: .1em 5px .1em 5px;
+}

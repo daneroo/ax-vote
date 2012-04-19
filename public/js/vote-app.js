@@ -7,6 +7,10 @@ function hideURLBar(){
 
 var app = app || {};
 app.svc=null;
+app.endpoint='/jsonrpc';
+app.questId = 'gre-predictions';
+
+app.voterId=null;
 
 $(function(){
   hideURLBar();
@@ -21,6 +25,30 @@ $(function(){
     hideURLBar();
   }
   
+  // called on page init, and after a failed vote...to reset state
+  function registerVoter(){
+    app.voterId = $.cookie('voterId');
+    console.log('previous voter id',app.voterId);
+    
+    $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Votez!');
+    $('.greunvote').hide();
+    jsonRPC(app.endpoint,'registerVoter',[app.voterId,app.questId],function(json) {
+      console.log('register:',JSON.stringify(json.result));
+      app.voterId = json.result.voterId;      
+      $.cookie('voterId',app.voterId,{ expires: 7, path: '/' });
+      
+      if (json.result.canVote===false){
+        $('.statusMessage').text('Vote déja enregistré');
+        $('.greunvote').show();        
+      } else if (json.result.contestOpen===false){
+        $('.statusMessage').text('Le concours est fermé');
+      } else {
+        $('.statusMessage').text('');
+        $('.grevote').removeClass('ui-disabled').attr('disabled','').find('.ui-btn-text').text('Votez!');
+      }
+    });
+    
+  }
   function showInvalid($el,valid){
       if(!valid) {
           valid=false;
@@ -43,10 +71,12 @@ $(function(){
       return valid;
   }
   function validateThenVote(){
-    questId = 'gre-predictions';
 
       var valid=true;
-      var answers={labels:{}};
+      var answers={
+        voterId:app.voterId
+        // labels:{}
+      };
       $('.quest-q').each(function(){
           var $this=$(this);
           var q=$this.data('quest-q')
@@ -63,18 +93,22 @@ $(function(){
               label=q;
           }
           answers[q]=value;
-          answers.labels[q]=label;
+          // answers.labels[q]=label;
       });
 
-      console.log('questId',questId,'answers',JSON.stringify(answers),'valid',valid);
+      console.log('questId',app.questId,'answers',JSON.stringify(answers),'valid',valid);
 
       if (valid){
           $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
-          $('.greunvote').show();
           
-          var endpoint='/jsonrpc';
-          jsonRPC(endpoint,'vote',[questId,answers],function(json) {
-            console.log('vote total:',json);
+          jsonRPC(app.endpoint,'vote',[app.questId,answers],function(json) {
+            if (json.error){
+              $('.statusMessage').text(json.error.message||'Erreur lors du vote');
+              registerVoter();
+            } else {
+              $('.statusMessage').text('Vote enregistré');
+              $('.greunvote').show();
+            }
           });
 
       }
@@ -96,6 +130,8 @@ $(function(){
     $('#quest-q-detail').val(Math.floor(Math.random()*2)+1).selectmenu("refresh");
     $('#quest-q-pme').val(Math.floor(Math.random()*3)+1).selectmenu("refresh");
     $('#quest-q-manufact').val(Math.floor(Math.random()*3)+1).selectmenu("refresh");
+    app.voterId='rnd-'+new Date().getTime()+'-'+(10000+Math.round(Math.random()*10000));
+    
     $('.grevote').click();
     return false;
   }
@@ -112,6 +148,9 @@ $(function(){
       var $select=$(this);
       validateSelect($select);
   });
+
+  // $.cookie
+  registerVoter();
   
 });
 

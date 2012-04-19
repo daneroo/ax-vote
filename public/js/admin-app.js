@@ -69,6 +69,11 @@ $(function(){
       appendVoteToListView(answer);    
       renderHistos();
       updateWinnerSelection();
+    },
+    updateContestState:function(state){
+      console.log('updateContestState',state);
+      $('#quest-active').val(state===true?1:0);
+      $('#quest-active').slider('refresh');
     }
   }).connect({reconnect:5000},function (remote) {
     app.svc=remote; // global!
@@ -81,7 +86,13 @@ $(function(){
       renderHistos();
       batchUpdateListView(answers);
       updateWinnerSelection();
-    })
+    });
+    app.svc.getContestState(function(err,state){
+      console.log('initialContestState',state);
+      // $('#quest-active').slider(state===true?'enable':'disable');
+      $('#quest-active').val(state===true?1:0);
+      $('#quest-active').slider('refresh');
+    });
   });
 
   function batchUpdateListView(answers){
@@ -103,6 +114,7 @@ $(function(){
     function lkup(questQ,value){return questLabels[questQ][value]||'';}
     var labels=[lkup('detail',answer.detail),lkup('pme',answer.pme),lkup('manufact',answer.manufact)];
     $v.append('<p>Vote : '+labels.join(', ')+'</p>');
+    $v.append($('<p/>').text('Id:'+answer.voterId));
     
     $depouillement.prepend($v);
     if (skipRefresh!==true){
@@ -192,6 +204,12 @@ $(function(){
   }
 
 
+  // Contest state
+  $('#quest-active').bind( "change", function(event, ui) {
+    var nustate=$(this).val();
+    console.log('setContestState',nustate);
+    app.svc.setContestState(nustate==1); // no callback
+  });
   // Section Gagnants
   $("input[type='radio']").bind( "change", function(event, ui) {
     var which = $(this).prop('name').substr(2); // w-detail,w-pme

@@ -33,6 +33,7 @@ server.use(express.static(__dirname+ '/public'));
 
 var counters={}; // counter by Name
 var answers={}; // answer arrays by questId
+var contestOpen=false; // should be a llokup by questId
 
 var services = {
   // incrments named counters use incr=0 to get current count
@@ -53,8 +54,39 @@ var services = {
     if(cb) cb(null,ans);
   },
   
+  getContestState: function(cb){
+    if(cb) cb(null,contestOpen);
+  },
+  setContestState: function(state,cb){
+    contestOpen=state;
+    if(cb) cb(null,contestOpen);
+    var message = 'contest is now '+((contestOpen)?'open':'closed');
+    broadcast(message,'contestState',contestOpen);
+  },
+  registerVoter: function(voterId,questId,cb){
+    voterId=voterId||'gre-'+new Date().getTime()+'-'+(10000+Math.round(Math.random()*10000));
+    // console.log('voter Id',voterId);
+    
+    var voteAllowed=canVote(voterId,questId);
+    if(cb) cb(null,{ 
+      voterId:voterId,
+      canVote:voteAllowed,
+      contestOpen:contestOpen
+    });
+  },
+  
   vote: function(questId,answer,cb){
     // console.log('vote','q',questId,'a',answer);
+    if (!contestOpen){
+      if(cb) cb({message:'Le concours est fermé'});
+      return;
+    }
+    var voteAllowed=canVote(answer.voterId,questId);
+    if (!voteAllowed){
+      if(cb) cb({message:'Vote déja enregistré'});
+      return;
+    }
+
 
     answers[questId] = answers[questId] || [];
     answers[questId].push(answer);
@@ -63,22 +95,20 @@ var services = {
     if(cb) cb(null,answers[questId].length);
     var message = 'new VOTE['+questId+']='+JSON.stringify(answer);
     broadcast(message,'vote',questId,answer);
-    // broadcast(message);
-    return;
-    
-    var previousRating=0;
-    if (req && req.session){ // bypass for dnode invocation
-      req.session.votes = req.session.votes || {};
-      previousRating=req.session.votes[id] || 0
-      if (!rating){
-        delete req.session.votes[id];
-      } else {
-        req.session.votes[id]=rating;
-      }
-    }
-
   }
 };
+
+function canVote(voterId,questId){
+  var canVote=true;
+  if (answers[questId]){
+    console.log('Checking',answers[questId].length,'votes for voterId');
+    answers[questId].forEach(function(a){
+      console.log('checking',voterId,'==',a.voterId);
+      if (voterId==a.voterId) canVote=false;
+    });
+  }
+  return canVote;
+}
 
 jsonrpc_services = require('connect-jsonrpc')(services);
 server.post('/jsonrpc', function(req, res, next){
@@ -99,8 +129,11 @@ var ioOpts= (process.env.VMC_APP_PORT)?{
 var clients=[];
 var dns = dnode(function(client,con){
   this.count=services.count;
-  this.vote=services.vote;
   this.getAnswers=services.getAnswers;
+  this.getContestState=services.getContestState;
+  this.setContestState=services.setContestState;
+  this.registerVoter=services.registerVoter;
+  this.vote=services.vote;
 
   con.on('ready', function () {
     clients.push(client);
@@ -120,7 +153,9 @@ function broadcast(msg,type,id,thing){
     client.log(msg);
     if (type=='count'){
       // console.log('bcast update count',id,thing);
-      client.updateCount(id,thing);
+      client.updateCount(id,thing);      
+    } else if (type=='contestState'){
+      client.updateContestState(id)
     } else if (type=='vote' && id && thing){
       client.updateVote(id,thing);
     }

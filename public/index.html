@@ -72,27 +72,28 @@
             <!-- <label for="quest-q-name">Votre nom:</label> -->
             <input class="quest-q" type="text" data-quest-q="name" id="quest-q-name" value=""  placeholder="Entrez votre nom" data-theme="a"/>
 
-            <label for="quest-q-detail" class="select">Commerce de détail:</label>
+            <label for="quest-q-detail" class="select">Faites vos prédictions</label>
+            <!-- <label for="quest-q-detail" class="select">Commerce de détail:</label> -->
             <select class="quest-q" data-quest-q="detail" id="quest-q-detail"  data-theme="b">
-                <option value="0">Faites votre prédiction</option>
+                <option value="0">Choisir un détailllant</option>
                 <option value="1">COOP UdeS</option>
                 <option value="2">McDONALDS</option>
             </select>
-            <label for="quest-q-pme" class="select">Petite entreprise:</label>
+            <!-- <label for="quest-q-pme" class="select">Petite entreprise:</label> -->
             <select class="quest-q" data-quest-q="pme" id="quest-q-pme" data-theme="b">
-                <option value="0">Faites votre prédiction</option>
+                <option value="0">Choisir une PME</option>
                 <option value="1">MOTO SUR 2 ROUES</option>
                 <option value="2">PMC TIRE.COM</option>
                 <option value="3">VOODOO</option>
             </select>
-            <label for="quest-q-manufact" class="select">Entreprise manufacturière:</label>
+            <!-- <label for="quest-q-manufact" class="select">Entreprise manufacturière:</label> -->
             <select class="quest-q" data-quest-q="manufact" id="quest-q-manufact" data-theme="b">
-                <option value="0">Faites votre prédiction</option>
+                <option value="0">Choisir un manufacturier</option>
                 <option value="1">ENERKEM</option>
                 <option value="2">PORTABLE WINCH</option>
                 <option value="3">MAÇONNERIE CORRIVEAU</option>
             </select>
-
+            <div class="statusMessage"></div>
             <div style="float:right;" >
               <a class="grevote" style="float:right;" data-role="button" data-iconshadow="true" data-icon="check" data-inline="true" >Votez!</a>
               <a class="greunvote" style="display:none;float:right;" data-role="button" data-iconshadow="true" data-icon="delete" data-inline="true" >Annuler</a>
@@ -117,6 +118,7 @@
   <!-- jQuery Mobile-->
   <script src="//code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"></script>
   <!-- scripts concatenated and minified via ant build script -->
+  <script src="js/libs/jquery.cookie.js"></script>
   <script src="js/mylibs/helper.js"></script>
   <!-- end concatenated and minified scripts-->
   <!-- not yet to be minified-->
