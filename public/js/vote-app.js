@@ -116,10 +116,22 @@ $(function(){
       return false;
   }
   function unVote(){
-      $('.greunvote').hide();
-      $('.grevote').removeClass('ui-disabled').attr('disabled','').find('.ui-btn-text').text('Votez!');
-      // now post the unvote
-      return false;
+    console.log('unvoting',app.voterId);
+    jsonRPC(app.endpoint,'unvote',[app.questId,app.voterId],function(json) {
+      console.log('back from unvoting',json);
+      if (json.error){
+        $('.statusMessage').text(json.error.message||'Erreur lors du vote');
+      } else {
+        $('.statusMessage').text('Vote enregistré');
+        $('.greunvote').show();
+      }
+      registerVoter();
+    });
+
+      // $('.greunvote').hide();
+      // $('.grevote').removeClass('ui-disabled').attr('disabled','').find('.ui-btn-text').text('Votez!');
+      // // now post the unvote
+      // return false;
   }
   
   // for random vote

@@ -70,6 +70,22 @@ $(function(){
       renderHistos();
       updateWinnerSelection();
     },
+    updateUnvote:function(questId,voterId){
+      console.log('got updateUnvote',questId,voterId);
+      var filtered = [];
+      $.each(app.answers[questId],function(i,a){
+        console.log('keeping',voterId,'!=',a.voterId);
+        if (voterId!=a.voterId) filtered.push(a);
+      });
+      // if we removed at least one
+      if (app.answers[questId].length!=filtered.length){
+        app.answers[questId]=filtered;
+        // re-render the whole list...
+        batchUpdateListView(app.answers[questId]);
+        renderHistos();
+        updateWinnerSelection();
+      }
+    },
     updateContestState:function(state){
       console.log('updateContestState',state);
       $('#quest-active').val(state===true?1:0);

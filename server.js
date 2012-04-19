@@ -33,7 +33,7 @@ server.use(express.static(__dirname+ '/public'));
 
 var counters={}; // counter by Name
 var answers={}; // answer arrays by questId
-var contestOpen=false; // should be a llokup by questId
+var contestOpen=true; // should be a llokup by questId
 
 var services = {
   // incrments named counters use incr=0 to get current count
@@ -93,17 +93,33 @@ var services = {
 
     // console.log('|vote|[',questId,']',answers[questId].length);
     if(cb) cb(null,answers[questId].length);
-    var message = 'new VOTE['+questId+']='+JSON.stringify(answer);
+    var message = 'vote '+questId+'-'+answer.voterId;
     broadcast(message,'vote',questId,answer);
+  },
+  unvote: function(questId,voterId,cb){
+    if (answers[questId]){
+      console.log('Checking',answers[questId].length,'votes to remove voterId',voterId);
+      var filtered = [];
+      answers[questId].forEach(function(a){
+        console.log('checking',voterId,'!=',a.voterId);
+        if (voterId!=a.voterId) filtered.push(a);
+      });
+      // if we removed at least one
+      if (answers[questId].length!=filtered.length){
+        // swap the filtered set
+        answers[questId]=filtered;
+        var message = 'unvote '+questId+'-'+voterId;
+        broadcast(message,'unvote',questId,voterId);
+      }
+    }
+    if(cb) cb(null,answers[questId].length);
   }
 };
 
 function canVote(voterId,questId){
   var canVote=true;
   if (answers[questId]){
-    console.log('Checking',answers[questId].length,'votes for voterId');
     answers[questId].forEach(function(a){
-      console.log('checking',voterId,'==',a.voterId);
       if (voterId==a.voterId) canVote=false;
     });
   }
@@ -134,6 +150,7 @@ var dns = dnode(function(client,con){
   this.setContestState=services.setContestState;
   this.registerVoter=services.registerVoter;
   this.vote=services.vote;
+  this.unvote=services.unvote;
 
   con.on('ready', function () {
     clients.push(client);
@@ -150,12 +167,15 @@ var dns = dnode(function(client,con){
 function broadcast(msg,type,id,thing){
   // console.log('bcast[type,id,thing]',type,id,thing);
   clients.forEach(function(client){
+    console.log('broadcast message',msg);
     client.log(msg);
     if (type=='count'){
-      // console.log('bcast update count',id,thing);
-      client.updateCount(id,thing);      
+      client.updateCount(id,thing);
     } else if (type=='contestState'){
       client.updateContestState(id)
+    } else if (type=='unvote'){
+      console.log('broadcast unvote',id,thing);
+      client.updateUnvote(id,thing)
     } else if (type=='vote' && id && thing){
       client.updateVote(id,thing);
     }
