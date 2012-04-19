@@ -25,6 +25,20 @@ $(function(){
     hideURLBar();
   }
   
+  // if we have succesfully submitted a vote, previous values are in a cookie - restore them
+  function resetValues(){
+    var values = $.cookie('voteValues');
+    if (values){
+      try {  
+        values = JSON.parse(values);
+        console.log('previous values:',values);
+        if (values.name) $('#quest-q-name').val(values.name);
+        if (values.detail) $('#quest-q-detail').val(values.detail).selectmenu('refresh');
+        if (values.pme) $('#quest-q-pme').val(values.pme).selectmenu('refresh');
+        if (values.manufact) $('#quest-q-manufact').val(values.manufact).selectmenu('refresh');
+      } catch (e) {}      
+    }
+  }
   // called on page init, and after a failed vote...to reset state
   function registerVoter(){
     app.voterId = $.cookie('voterId');
@@ -100,6 +114,9 @@ $(function(){
 
       if (valid){
           $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
+
+          // save these to a cookie, before we post
+          $.cookie('voteValues',JSON.stringify(answers),{ raw:true, expires: 7, path: '/' });
           
           jsonRPC(app.endpoint,'vote',[app.questId,answers],function(json) {
             if (json.error){
@@ -162,6 +179,7 @@ $(function(){
   });
 
   // $.cookie
+  resetValues();
   registerVoter();
   
 });
