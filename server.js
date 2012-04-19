@@ -98,10 +98,10 @@ var services = {
   },
   unvote: function(questId,voterId,cb){
     if (answers[questId]){
-      console.log('Checking',answers[questId].length,'votes to remove voterId',voterId);
+      // console.log('Checking',answers[questId].length,'votes to remove voterId',voterId);
       var filtered = [];
       answers[questId].forEach(function(a){
-        console.log('checking',voterId,'!=',a.voterId);
+        // console.log('checking',voterId,'!=',a.voterId);
         if (voterId!=a.voterId) filtered.push(a);
       });
       // if we removed at least one
@@ -167,14 +167,12 @@ var dns = dnode(function(client,con){
 function broadcast(msg,type,id,thing){
   // console.log('bcast[type,id,thing]',type,id,thing);
   clients.forEach(function(client){
-    console.log('broadcast message',msg);
     client.log(msg);
     if (type=='count'){
       client.updateCount(id,thing);
     } else if (type=='contestState'){
       client.updateContestState(id)
     } else if (type=='unvote'){
-      console.log('broadcast unvote',id,thing);
       client.updateUnvote(id,thing)
     } else if (type=='vote' && id && thing){
       client.updateVote(id,thing);

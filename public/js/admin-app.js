@@ -54,16 +54,16 @@ $(function(){
   
   DNode({
     log:function(msg){
-      console.log('msg from server: ',msg);
+      // console.log('msg from server: ',msg);
       $('#log').text(msg);
     },
     updateCount:function(name,count){
-      console.log('got updateCount',name,count);
+      // console.log('got updateCount',name,count);
       app.counters[name]=count;
       $('#skypeHits').text(count);      
     },
     updateVote:function(questId,answer){
-      console.log('got updateVote',questId,answer);
+      // console.log('got updateVote',questId,answer);
       app.answers[questId] = app.answers[questId] || [];
       app.answers[questId].push(answer);
       appendVoteToListView(answer);    
@@ -71,10 +71,10 @@ $(function(){
       updateWinnerSelection();
     },
     updateUnvote:function(questId,voterId){
-      console.log('got updateUnvote',questId,voterId);
+      // console.log('got updateUnvote',questId,voterId);
       var filtered = [];
       $.each(app.answers[questId],function(i,a){
-        console.log('keeping',voterId,'!=',a.voterId);
+        // console.log('keeping',voterId,'!=',a.voterId);
         if (voterId!=a.voterId) filtered.push(a);
       });
       // if we removed at least one
@@ -87,7 +87,7 @@ $(function(){
       }
     },
     updateContestState:function(state){
-      console.log('updateContestState',state);
+      // console.log('updateContestState',state);
       $('#quest-active').val(state===true?1:0);
       $('#quest-active').slider('refresh');
     }
@@ -97,14 +97,14 @@ $(function(){
     renderHistos();
     var answerKey='gre-predictions';    
     app.svc.getAnswers(answerKey,function(err,answers){
-      console.log('got answers',answerKey,(answers.length)?answers.length:0);
+      // console.log('got answers',answerKey,(answers.length)?answers.length:0);
       app.answers[answerKey]=answers;
       renderHistos();
       batchUpdateListView(answers);
       updateWinnerSelection();
     });
     app.svc.getContestState(function(err,state){
-      console.log('initialContestState',state);
+      // console.log('initialContestState',state);
       // $('#quest-active').slider(state===true?'enable':'disable');
       $('#quest-active').val(state===true?1:0);
       $('#quest-active').slider('refresh');
@@ -163,7 +163,7 @@ $(function(){
     });
   }
   function updateHisto(name,distr){
-    console.log('updateHisto',name,distr);
+    // console.log('updateHisto',name,distr);
     var max=1;
     var w=130,h=60;
     var distr=distr||[1,2,3];
@@ -236,21 +236,20 @@ $(function(){
     var winnersToSelect=6;
     var winners=[];
     $.each([3,2,1,0],function(i,predictions){
-      console.log('looking for winners with',predictions,'correct predictions');
+      // console.log('looking for winners with',predictions,'correct predictions');
       var candidates = winnersByCorrectPredictions[predictions];
-      console.log('among',candidates.length,'candidates');
+      // console.log('among',candidates.length,'candidates');
       while (candidates.length>0 && winners.length<winnersToSelect){
-        console.log('|candidates|',candidates.length,'|winners|',winners.length);
         var nextWinnerIndex = Math.floor(Math.random()*99991)%candidates.length;
         var winner = candidates[nextWinnerIndex];
         // remove the winning entry...
         candidates.splice(nextWinnerIndex, 1); 
-        console.log('winner',winner);
+        // console.log('next winner',winner);
         winner.predictions=predictions;
         winners.push(winner);
       }
     });
-    console.log(winners);
+    // console.log(winners);
     var $winnersList = $('#selectedWinnerList');
     $winnersList.html('');
     var lastWinnerPredictions=999;
@@ -282,7 +281,7 @@ $(function(){
   // Contest state
   $('#quest-active').bind( "change", function(event, ui) {
     var nustate=$(this).val();
-    console.log('setContestState',nustate);
+    // console.log('setContestState',nustate);
     app.svc.setContestState(nustate==1); // no callback
   });
   // Section Gagnants

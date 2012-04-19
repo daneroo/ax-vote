@@ -31,7 +31,6 @@ $(function(){
     if (values){
       try {  
         values = JSON.parse(values);
-        console.log('previous values:',values);
         if (values.name) $('#quest-q-name').val(values.name);
         if (values.detail) $('#quest-q-detail').val(values.detail).selectmenu('refresh');
         if (values.pme) $('#quest-q-pme').val(values.pme).selectmenu('refresh');
@@ -42,12 +41,12 @@ $(function(){
   // called on page init, and after a failed vote...to reset state
   function registerVoter(){
     app.voterId = $.cookie('voterId');
-    console.log('previous voter id',app.voterId);
+    // console.log('previous voter id',app.voterId);
     
     $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Votez!');
     $('.greunvote').hide();
     jsonRPC(app.endpoint,'registerVoter',[app.voterId,app.questId],function(json) {
-      console.log('register:',JSON.stringify(json.result));
+      // console.log('register:',JSON.stringify(json.result));
       app.voterId = json.result.voterId;      
       $.cookie('voterId',app.voterId,{ expires: 7, path: '/' });
       
@@ -110,7 +109,7 @@ $(function(){
           // answers.labels[q]=label;
       });
 
-      console.log('questId',app.questId,'answers',JSON.stringify(answers),'valid',valid);
+      // console.log('questId',app.questId,'answers',JSON.stringify(answers),'valid',valid);
 
       if (valid){
           $('.grevote').addClass('ui-disabled').attr('disabled','disabled').find('.ui-btn-text').text('Merci!');
@@ -133,9 +132,8 @@ $(function(){
       return false;
   }
   function unVote(){
-    console.log('unvoting',app.voterId);
+    // console.log('unvoting',app.voterId);
     jsonRPC(app.endpoint,'unvote',[app.questId,app.voterId],function(json) {
-      console.log('back from unvoting',json);
       if (json.error){
         $('.statusMessage').text(json.error.message||'Erreur lors du vote');
       } else {
