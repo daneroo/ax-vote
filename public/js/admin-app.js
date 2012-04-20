@@ -14,7 +14,7 @@ app.answers={}; // answer arrays by questId
 // specififc for GRE
 var questLabels = {
   detail:["-","COOP UdeS","McDONALDS"],
-  pme:["-","MOTO SUR 2 ROUES","PMC TIRE.COM","VOODOO"],
+  pme:["-","MOTO SUR 2 ROUES","PMCTIRE.COM","VOODOO"],
   manufact:["-","ENERKEM","PORTABLE WINCH","MAÇONNERIE CORRIVEAU"],
 }
 var currentWinnerSelection={
