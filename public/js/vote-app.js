@@ -174,6 +174,7 @@ $(function(){
   $('select').change(function(){
       var $select=$(this);
       validateSelect($select);
+      hideURLBar();
   });
 
   // $.cookie
