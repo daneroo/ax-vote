@@ -1,5 +1,5 @@
 // Config section
-var port = (process.env.VMC_APP_PORT || 3000);
+var port = (process.env.VMC_APP_PORT || 8080);
 var host = (process.env.VCAP_APP_HOST || '0.0.0.0'|| 'localhost');
 
 var express = require('express');

@@ -7,13 +7,13 @@ This branch is to support the Gala Reconnaissance Estrie live event:
 * Selection des gagnats
 
 ## Initial deployment to cloudfoundry
-When it's up, you can find it [here](http://ax-vote.cloudfoundry.com)
+When it's up, you can find it [here](http://votrevote.cloudfoundry.com)
 
     # if not yet created... (add mongo later)
-    vmc push eko-gre
+    vmc push votrevote
 
     # to push an update
-    vmc update eko-gre
+    vmc update votrevote
 
 
 
