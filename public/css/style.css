@@ -28,8 +28,9 @@ div.voteresult {
 }
 
 div.statusMessage {
+  margin-top:3px;
   text-align: center;
-  color:#f70;
+  color:#0ABBD7;
 }
 
 .testlog {
@@ -57,14 +58,15 @@ label.select {
 #winner-select fieldset.ui-controlgroup {
   margin: 1px 0;  
 }
-#winner-select .ui-controlgroup .ui-checkbox label,#winner-select .ui-controlgroup .ui-radio label {
+
+/*#winner-select .ui-controlgroup .ui-checkbox label,#winner-select .ui-controlgroup .ui-radio label {
   font-size: 12px;
 }
 
 #winner-select .ui-slider  span {
   font-size: 14px;
 }
-
+*/
 #scrutin-complet .ui-li .ui-btn-inner a.ui-link-inherit, #scrutin-complet .ui-li-static.ui-li {
 padding: .1em 5px .1em 5px;
 }
