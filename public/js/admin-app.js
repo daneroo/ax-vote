@@ -13,9 +13,9 @@ app.answers={}; // answer arrays by questId
 
 // specififc for GRE
 var questLabels = {
-  detail:["-","2012","2015","2018"],
+  detail:["-","2012","2014","2018"],
   pme:["-","2 secondes","5 secondes","10 secondes"],
-  manufact:["-","20%","40%","60%"],
+  manufact:["-","20%","40%","89%"],
 }
 var currentWinnerSelection={
   detail:0,
